@@ -10,94 +10,89 @@ reduciendo el desperdicio alimentario de forma practica y sostenible.
 
 ## Equipo de Desarrollo
 
-| Parte | Responsable | Modulo |
-|-------|-------------|--------|
-| Parte 1 | Maykel | Autenticacion, Roles, Registro, Catalogo de Comercio, Dashboard |
-| Parte 2 | Ruben  | Exploracion para Clientes, Reservas, Historial |
-| Parte 3 | Luis   | Impacto CO2, Estadisticas, Gamificacion |
-| Parte 4 | Andy   | Backend, API REST, Base de Datos Remota |
+| Parte | Responsable | Estado | Documentacion |
+|-------|-------------|--------|---------------|
+| Parte 1 | Maykel  | COMPLETADO | [docs/documento_parte1_dispensave.md](docs/documento_parte1_dispensave.md) |
+| Parte 2 | Ruben   | PENDIENTE  | [docs/parte2_ruben.md](docs/parte2_ruben.md) |
+| Parte 3 | Luis    | PENDIENTE  | [docs/parte3_luis.md](docs/parte3_luis.md) |
+| Parte 4 | Andy    | PENDIENTE  | [docs/parte4_andy.md](docs/parte4_andy.md) |
 
 ---
 
-## Funcionalidades de Parte 1 (Maykel - COMPLETADO)
+## Como empezar (para Ruben, Luis y Andy)
 
-### Para Clientes (Consumidores)
-- Registro con validacion estricta de correo (solo dominios reales), nombre (min 3 letras, sin repeticiones) y contrasena (mayuscula + numero + especial)
-- Login con manejo de errores (correo no registrado vs. contrasena incorrecta)
-- Aceptacion obligatoria de Terminos y Condiciones
-- Exploracion de packs del dia y productos individuales
-- Filtro por categoria: Panaderia, Restaurante, Cafeteria, Pasteleria
-- Vista de contenido del pack antes de reservar
-- Ticket digital con codigo de recojo
-- Badge de descuento resaltado para packs con mayor ahorro (60-75%)
+1. Clona el repositorio:
+   git clone https://github.com/maykelcb/DispenSave.git
 
-### Para Comercios
-- Registro con seleccion OBLIGATORIA de rubro (Panaderia / Restaurante / Cafeteria / Pasteleria)
-- Panel del comercio con 3 pestanas:
-  - **Publicaciones**: packs y productos publicados con precio original tachado, precio rescate y descuento
-  - **Mi Catalogo**: inventario propio con botones +/- de stock, agregar y eliminar productos libremente
-  - **Pedidos de Clientes**: pedidos pendientes con codigo del cliente, boton de confirmar entrega
-- Publicar **Producto Individual**: selecciona 1 item de su catalogo
-- Publicar **Pack de Hoy**: multi-seleccion de varios items de su catalogo, mayor descuento
-- Validacion numerica estricta en precios y cantidades (sin letras)
-- Franjas horarias predefinidas mediante chips
+2. Abre en Android Studio (version Hedgehog o superior recomendada)
+
+3. Lee TU documentacion especifica antes de tocar cualquier codigo:
+   - Ruben: docs/parte2_ruben.md
+   - Luis:  docs/parte3_luis.md
+   - Andy:  docs/parte4_andy.md
+
+4. Crea tu propia rama de trabajo:
+   git checkout -b feature/parte2-ruben      (Ruben)
+   git checkout -b feature/parte3-luis       (Luis)
+   git checkout -b feature/parte4-andy       (Andy)
+
+5. Haz tus cambios, commitea frecuentemente y sube tu rama:
+   git add -A
+   git commit -m "feat(parte2): descripcion del cambio"
+   git push origin feature/parte2-ruben
+
+6. Cuando termines, crea un Pull Request en GitHub hacia main y avisa a Maykel
 
 ---
 
-## Tecnologias
+## IMPORTANTE: Reglas para no romper el proyecto
 
-- **Android Studio** + Kotlin
-- **Jetpack Compose** para UI
-- **Navigation Compose** para navegacion
-- **ViewModel** + StateFlow para manejo de estado
-- **Room Database** (preparado para Parte 4)
-- **SharedPreferences** para persistencia local de usuarios registrados
+- NO modificar PantryViewModel.kt sin coordinar con Maykel
+- NO cambiar las firmas de registerUser(), loginUser(), publishSurplusBag()
+- NO modificar los modelos en domain/model/ sin coordinar con todo el equipo
+- SIEMPRE trabajar en tu propia rama, nunca pushear directo a main
+- Hacer commits pequenos y descriptivos (no un solo commit con todo)
+
+---
+
+## Cuentas de prueba para testear
+
+| Correo | Contrasena | Rol | Categoria |
+|--------|-----------|-----|-----------|
+| maykel@universidad.edu.pe | Password123* | Cliente | - |
+| maykelcb095@gmail.com | Password123* | Cliente | - |
+| labaguette@gmail.com | Password123* | Comercio | Panaderia |
+| saborcriollo@gmail.com | Password123* | Comercio | Restaurante |
+
+---
+
+## Funcionalidades de Parte 1 (COMPLETADO)
+
+- Registro con validacion estricta (correo real, nombre min 3 letras, contrasena segura)
+- Seleccion obligatoria de rubro al registrar comercio (Panaderia / Restaurante / Cafeteria / Pasteleria)
+- Catalogo propio del comercio: agrega productos libremente, control de stock con +/-
+- Publicar Producto Individual: selecciona 1 producto del catalogo
+- Publicar Pack de Hoy: multi-seleccion con mayor descuento (60-75%)
+- Validacion numerica estricta en precios y cantidades
+- Franjas horarias predefinidas (chips, sin texto libre)
+- Vista del cliente: packs con contenido visible, badge de descuento, precio original tachado
+- Pedidos de clientes en el panel del comercio con confirmacion de entrega
+- Pantalla de pedidos adaptada segun rol (cliente vs comercio)
 
 ---
 
 ## Estructura del Proyecto
 
-```
 app/src/main/java/com/example/dispensave/
-├── data/repository/         # RescueRepository, UserRepository, PantryRepository
-├── domain/model/            # User, SurplusBag, Order, MerchantProduct, etc.
-├── ui/
-│   ├── auth/                # LoginScreen, RegisterScreen
-│   ├── home/                # ExploreScreen (cliente)
-│   ├── merchant/            # StoreDashboardScreen (comercio)
-│   ├── navigation/          # AppNavigation
-│   ├── onboarding/          # OnboardingScreen
-│   ├── orders/              # MyOrdersScreen (adaptado por rol)
-│   └── impact/              # ImpactScreen
-└── util/ValidationUtils.kt
-```
-
----
-
-## Como Ejecutar
-
-1. Clonar el repositorio: `git clone https://github.com/maykelcb/DispenSave.git`
-2. Abrir en **Android Studio Hedgehog** o superior
-3. Esperar que Gradle sincronice automaticamente
-4. Ejecutar en dispositivo o emulador con **API 26+**
-
-### Cuentas de prueba
-| Correo | Contrasena | Rol |
-|--------|-----------|-----|
-| maykel@universidad.edu.pe | Password123* | Cliente |
-| labaguette@gmail.com | Password123* | Comercio - Panaderia |
-| saborcriollo@gmail.com | Password123* | Comercio - Restaurante |
-
----
-
-## Documentacion Detallada
-
-Ver [docs/documento_parte1_dispensave.md](docs/documento_parte1_dispensave.md) para documentacion completa de la Parte 1.
-
----
-
-## Proximos Pasos
-
-- **Ruben (Parte 2)**: Mejorar ExploreScreen con imagenes, busqueda, favoritos y notificaciones
-- **Luis (Parte 3)**: Estadisticas de impacto CO2, logros y graficas
-- **Andy (Parte 4)**: API REST real, JWT, Firebase y geolocalizacion
+  data/repository/         RescueRepository, UserRepository, PantryRepository
+  domain/model/            User, SurplusBag, Order, MerchantProduct, etc.
+  ui/
+    auth/                  LoginScreen, RegisterScreen
+    home/                  ExploreScreen (cliente)
+    merchant/              StoreDashboardScreen (comercio)
+    navigation/            AppNavigation
+    onboarding/            OnboardingScreen
+    orders/                MyOrdersScreen (adaptado por rol)
+    impact/                ImpactScreen
+    pantry/                PantryScreen, PantryViewModel
+  util/ValidationUtils.kt
