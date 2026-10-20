@@ -1,3 +1,15 @@
+> [!IMPORTANT]
+> ### 📌 SECCIÓN DEL INFORME ACADÉMICO ASIGNADA A LUIS:
+> **Secciones a redactar en el informe para Word:**
+> 1. **Sección 4.3: Diseño de Base de Datos** (Modelo Entidad-Relación, Diccionario de datos de usuarios, ofertas, pedidos, catálogo e impacto, y justificación de Room).
+> 2. **Sección V.1: Historias de Usuario HU09 a HU12** en formato tabla (Cálculo de CO₂/Agua/Dinero, Gamificación e insignias, Historial de pedidos, Compartir en redes).
+> 3. **Sección V.2: Sprint 3 de Desarrollo** (Objetivo, funcionalidades y actividades).
+> 4. **Sección VI.3: Evidencias de Implementación** (Código de entidades Room, DAOs y capturas de métricas).
+>
+> *Para ver la asignación completa del equipo, revisa [DISTRIBUCION_INFORME_EQUIPO.md](DISTRIBUCION_INFORME_EQUIPO.md).*
+
+---
+
 # Parte 3 - Impacto CO2 y Estadisticas de Rescate
 **Responsable:** Luis
 **Rama recomendada:** git checkout -b feature/parte3-luis

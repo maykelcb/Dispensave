@@ -1,3 +1,15 @@
+> [!IMPORTANT]
+> ### 📌 SECCIÓN DEL INFORME ACADÉMICO ASIGNADA A RUBÉN:
+> **Secciones a redactar en el informe para Word:**
+> 1. **Sección 4.4: Diseño de Interfaces** (Pantallas principales del cliente, flujo de navegación, wireframes/mockups).
+> 2. **Sección V.1: Historias de Usuario HU05 a HU08** en formato tabla (Buscador/Filtros, Ficha de Detalle, Favoritos, Notificaciones).
+> 3. **Sección V.2: Sprint 2 de Desarrollo** (Objetivo, funcionalidades y actividades).
+> 4. **Sección VI.2: Evidencias de Implementación** (Capturas de nuevas pantallas y código de Composables).
+>
+> *Para ver la asignación completa del equipo, revisa [DISTRIBUCION_INFORME_EQUIPO.md](DISTRIBUCION_INFORME_EQUIPO.md).*
+
+---
+
 # Parte 2 - Exploracion y Experiencia del Cliente
 **Responsable:** Ruben
 **Rama recomendada:** git checkout -b feature/parte2-ruben

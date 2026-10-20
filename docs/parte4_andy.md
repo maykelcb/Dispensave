@@ -1,3 +1,15 @@
+> [!IMPORTANT]
+> ### 📌 SECCIÓN DEL INFORME ACADÉMICO ASIGNADA A ANDY:
+> **Secciones a redactar en el informe para Word:**
+> 1. **Sección 4.2: Tecnologías Utilizadas** (Kotlin, Jetpack Compose, Firebase Auth, Firestore, Firebase Storage, FCM Notificaciones Push, Google Maps/GPS, justificación técnica).
+> 2. **Sección V.1: Historias de Usuario HU13 a HU16** en formato tabla (Autenticación cloud, Tiempo real y transacciones de stock, Notificaciones push, Modo offline).
+> 3. **Sección V.2: Sprint 4 de Desarrollo** (Objetivo, funcionalidades y actividades).
+> 4. **Sección VI.4: Evidencias de Implementación** (Estructura de colecciones Firestore y consola Firebase).
+>
+> *Para ver la asignación completa del equipo, revisa [DISTRIBUCION_INFORME_EQUIPO.md](DISTRIBUCION_INFORME_EQUIPO.md).*
+
+---
+
 # Parte 4 - Backend, API y Persistencia Real
 **Responsable:** Andy
 **Rama recomendada:** git checkout -b feature/parte4-andy
