@@ -1,4 +1,4 @@
-﻿package com.example.dispensave.domain.model
+package com.example.dispensave.domain.model
 
 import java.text.SimpleDateFormat
 import java.util.*

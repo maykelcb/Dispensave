@@ -1,4 +1,4 @@
-﻿package com.example.dispensave.ui.home
+package com.example.dispensave.ui.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,10 +8,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Autorenew
 import androidx.compose.material.icons.filled.Eco
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Settings
@@ -56,7 +55,7 @@ fun HomeScreen(
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        // Cabecera de usuario
+        // Cabecera de usuario: Solo muestra el nombre del usuario sin el correo abajo
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -64,15 +63,10 @@ fun HomeScreen(
         ) {
             Column {
                 Text(
-                    text = "¡Hola, Maykel!",
+                    text = "¡Hola, " + viewModel.userName + "!",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = GreenPrimary
-                )
-                Text(
-                    text = viewModel.userEmail,
-                    fontSize = 12.sp,
-                    color = Color.Gray
                 )
             }
             IconButton(onClick = { showProfileDialog = true }) {
@@ -101,77 +95,102 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
                         Text(
-                            text = "¡Alimentos por vencer o vencidos!",
+                            text = "¡Atención! Insumos por vencer",
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFFE65100),
-                            fontSize = 14.sp
+                            fontSize = 15.sp
                         )
                         Text(
-                            text = "Tienes ${urgentProducts.size} insumos que requieren tu atención. Consúmelos o deséchalos pronto.",
+                            text = "Tienes " + urgentProducts.size + " producto(s) crítico(s). Prioriza su consumo hoy.",
                             fontSize = 12.sp,
-                            color = Color(0xFFEF6C00)
+                            color = Color(0xFF8D6E63)
                         )
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
         }
 
-        // Sección "Consumir pronto"
+        // Resumen rápido
         Text(
-            text = "Consumir pronto",
+            text = "Resumen de tu Despensa",
             fontWeight = FontWeight.Bold,
             fontSize = 16.sp,
-            color = GreenPrimary
+            color = Color.DarkGray
         )
         Spacer(modifier = Modifier.height(12.dp))
 
-        if (urgentProducts.isEmpty()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             Card(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(14.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White)
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
+                Column(modifier = Modifier.padding(14.dp)) {
+                    Text(text = "Total Alimentos", fontSize = 12.sp, color = Color.Gray)
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "¡Todo al día! No tienes insumos por vencer hoy.",
-                        color = Color.Gray,
-                        fontSize = 13.sp
+                        text = "" + products.size,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = GreenPrimary
                     )
                 }
             }
-        } else {
-            urgentProducts.take(4).forEach { item ->
-                val isExpired = item.isExpired || item.calculatedStatus == ProductStatus.VENCIDO
-                val badgeColor = if (isExpired) AlertRed else AlertOrange
-                val badgeText = if (isExpired) "Vencido" else "Vence en ${item.daysUntilExpiration} días"
+            Card(
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(14.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White)
+            ) {
+                Column(modifier = Modifier.padding(14.dp)) {
+                    Text(text = "Por Vencer / Vencidos", fontSize = 12.sp, color = Color.Gray)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "" + urgentProducts.size,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = if (urgentProducts.isNotEmpty()) AlertRed else GreenPrimary
+                    )
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(20.dp))
 
+        // Insumos críticos
+        if (urgentProducts.isNotEmpty()) {
+            Text(
+                text = "Consumir Primero",
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                color = Color.DarkGray
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+
+            urgentProducts.take(3).forEach { product ->
                 UrgentItemCard(
-                    name = item.name,
-                    location = "${item.category} • ${item.quantity} ${item.unit}",
-                    badgeText = badgeText,
-                    badgeColor = badgeColor,
-                    onClick = { onProductClick(item) }
+                    name = product.name,
+                    location = "" + product.quantity + " " + product.unit + " · " + product.category,
+                    badgeText = if (product.isExpired) "Vencido" else "Por Vencer",
+                    badgeColor = if (product.isExpired) AlertRed else AlertOrange,
+                    onClick = { onProductClick(product) }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
+            Spacer(modifier = Modifier.height(16.dp))
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // Acceso rápido
+        // Accesos directos rápidos
         Text(
-            text = "Acceso rápido",
+            text = "¿Qué deseas hacer hoy?",
             fontWeight = FontWeight.Bold,
             fontSize = 16.sp,
-            color = GreenPrimary
+            color = Color.DarkGray
         )
         Spacer(modifier = Modifier.height(12.dp))
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -263,12 +282,8 @@ fun HomeScreen(
         }
     }
 
-    // Diálogo de Cuenta y Perfil (para probar también la Regla 4 de validación de correo)
+    // Diálogo de Cuenta y Perfil
     if (showProfileDialog) {
-        var tempEmail by remember { mutableStateOf(viewModel.userEmail) }
-        var hasAttemptedUpdate by remember { mutableStateOf(false) }
-        val emailError = viewModel.validateEmail(tempEmail)
-
         AlertDialog(
             onDismissRequest = { showProfileDialog = false },
             title = {
@@ -279,42 +294,25 @@ fun HomeScreen(
                 }
             },
             text = {
-                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
-                        text = "Correo registrado (Regla 6.3.4):",
+                        text = "Usuario: " + viewModel.userName,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 14.sp
+                    )
+                    Text(
+                        text = "Correo: " + viewModel.userEmail,
                         fontSize = 13.sp,
                         color = Color.DarkGray
-                    )
-                    OutlinedTextField(
-                        value = tempEmail,
-                        onValueChange = { tempEmail = it },
-                        label = { Text("Correo electrónico") },
-                        placeholder = { Text("usuario@dominio.com") },
-                        leadingIcon = { Icon(Icons.Default.Email, contentDescription = null, tint = GreenPrimary) },
-                        isError = hasAttemptedUpdate && emailError != null,
-                        supportingText = {
-                            if (hasAttemptedUpdate && emailError != null) {
-                                Text(emailError, color = MaterialTheme.colorScheme.error, fontSize = 11.sp)
-                            }
-                        },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(10.dp)
                     )
                 }
             },
             confirmButton = {
                 Button(
-                    onClick = {
-                        hasAttemptedUpdate = true
-                        if (emailError == null) {
-                            viewModel.setUserEmailAddress(tempEmail.trim())
-                            showProfileDialog = false
-                        }
-                    },
+                    onClick = { showProfileDialog = false },
                     colors = ButtonDefaults.buttonColors(containerColor = GreenPrimary)
                 ) {
-                    Text("Actualizar")
+                    Text("Cerrar")
                 }
             },
             dismissButton = {
@@ -322,7 +320,7 @@ fun HomeScreen(
                     showProfileDialog = false
                     onLogoutClick()
                 }) {
-                    Icon(Icons.Default.Logout, contentDescription = null, tint = AlertRed, modifier = Modifier.size(16.dp))
+                    Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = null, tint = AlertRed, modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(4.dp))
                     Text("Cerrar Sesión", color = AlertRed)
                 }

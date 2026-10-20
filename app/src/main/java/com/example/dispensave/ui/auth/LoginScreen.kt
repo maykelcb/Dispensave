@@ -1,4 +1,4 @@
-﻿package com.example.dispensave.ui.auth
+package com.example.dispensave.ui.auth
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -8,7 +8,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
@@ -27,25 +27,28 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.dispensave.data.repository.LoginResult
 import com.example.dispensave.ui.pantry.PantryViewModel
 import com.example.dispensave.ui.theme.GreenPrimary
+import com.example.dispensave.util.ValidationUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     viewModel: PantryViewModel,
+    initialEmail: String = "",
     onLoginSuccess: () -> Unit,
     onBackClick: () -> Unit,
-    onGuestClick: () -> Unit
+    onRegisterClick: () -> Unit
 ) {
-    var email by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf(initialEmail.ifEmpty { viewModel.userEmail }) }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var hasAttemptedSubmit by remember { mutableStateOf(false) }
+    var generalLoginError by remember { mutableStateOf<String?>(null) }
 
-    val emailError = viewModel.validateEmail(email)
+    val emailFormatError = if (hasAttemptedSubmit) ValidationUtils.validateEmailStrict(email) else null
     val passwordError = if (hasAttemptedSubmit && password.isBlank()) "La contraseña es requerida" else null
-    val isEmailErrorVisible = hasAttemptedSubmit && emailError != null
 
     val focusManager = LocalFocusManager.current
 
@@ -55,7 +58,7 @@ fun LoginScreen(
                 title = { },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Atrás", tint = Color.Black)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atrás", tint = Color.Black)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
@@ -95,7 +98,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
-                text = "Ingresa tu correo para gestionar tu despensa y recibir alertas de vencimiento.",
+                text = "Ingresa con tu cuenta registrada para acceder a tu despensa.",
                 fontSize = 13.sp,
                 color = Color.Gray,
                 textAlign = TextAlign.Center,
@@ -104,11 +107,12 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            // Campo Email con validación de Android EmailAddress
+            // Campo Email con validación estricta (rechaza .som, dominios inexistentes, etc.)
             OutlinedTextField(
                 value = email,
                 onValueChange = {
                     email = it
+                    generalLoginError = null
                 },
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text("Correo Electrónico") },
@@ -117,14 +121,14 @@ fun LoginScreen(
                     Icon(
                         imageVector = Icons.Default.Email,
                         contentDescription = "Correo",
-                        tint = if (isEmailErrorVisible) MaterialTheme.colorScheme.error else GreenPrimary
+                        tint = if (emailFormatError != null || generalLoginError != null) MaterialTheme.colorScheme.error else GreenPrimary
                     )
                 },
-                isError = isEmailErrorVisible,
+                isError = emailFormatError != null,
                 supportingText = {
-                    if (isEmailErrorVisible && emailError != null) {
+                    if (emailFormatError != null) {
                         Text(
-                            text = emailError,
+                            text = emailFormatError,
                             color = MaterialTheme.colorScheme.error,
                             fontSize = 12.sp
                         )
@@ -135,12 +139,7 @@ fun LoginScreen(
                     keyboardType = KeyboardType.Email,
                     imeAction = ImeAction.Next
                 ),
-                shape = RoundedCornerShape(12.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = GreenPrimary,
-                    unfocusedBorderColor = Color(0xFFDCDCDC),
-                    errorBorderColor = MaterialTheme.colorScheme.error
-                )
+                shape = RoundedCornerShape(12.dp)
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -148,7 +147,10 @@ fun LoginScreen(
             // Campo Password
             OutlinedTextField(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = {
+                    password = it
+                    generalLoginError = null
+                },
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text("Contraseña") },
                 leadingIcon = {
@@ -185,22 +187,46 @@ fun LoginScreen(
                 keyboardActions = KeyboardActions(
                     onDone = { focusManager.clearFocus() }
                 ),
-                shape = RoundedCornerShape(12.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = GreenPrimary,
-                    unfocusedBorderColor = Color(0xFFDCDCDC),
-                    errorBorderColor = MaterialTheme.colorScheme.error
-                )
+                shape = RoundedCornerShape(12.dp)
             )
+
+            if (generalLoginError != null) {
+                Spacer(modifier = Modifier.height(10.dp))
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.7f),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = generalLoginError!!,
+                        color = MaterialTheme.colorScheme.error,
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(12.dp),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(28.dp))
 
+            // Botón Iniciar Sesión (comprueba que la cuenta ya haya sido registrada)
             Button(
                 onClick = {
                     hasAttemptedSubmit = true
-                    if (emailError == null && password.isNotBlank()) {
-                        viewModel.setUserEmailAddress(email.trim())
-                        onLoginSuccess()
+                    generalLoginError = null
+                    val isEmailValid = ValidationUtils.validateEmailStrict(email) == null
+                    if (isEmailValid && password.isNotBlank()) {
+                        when (val result = viewModel.loginUser(email.trim(), password)) {
+                            is LoginResult.Success -> {
+                                onLoginSuccess()
+                            }
+                            is LoginResult.EmailNotRegistered -> {
+                                generalLoginError = "Esta cuenta no está registrada. Verifica tus datos o regístrate como nuevo usuario."
+                            }
+                            is LoginResult.IncorrectPassword -> {
+                                generalLoginError = "Contraseña incorrecta. Por favor inténtalo de nuevo."
+                            }
+                        }
                     }
                 },
                 modifier = Modifier
@@ -216,21 +242,27 @@ fun LoginScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(14.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-            OutlinedButton(
-                onClick = onGuestClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
-                shape = RoundedCornerShape(26.dp),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = GreenPrimary)
+            // Enlace para registrarse (se quitó la opción de ingresar como invitado)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Continuar como invitado",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Medium
+                    text = "¿No tienes una cuenta?",
+                    fontSize = 14.sp,
+                    color = Color.Gray
                 )
+                TextButton(onClick = onRegisterClick) {
+                    Text(
+                        text = "Regístrate",
+                        color = GreenPrimary,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(20.dp))

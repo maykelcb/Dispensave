@@ -8,13 +8,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.example.dispensave.data.repository.PantryRepository
+import com.example.dispensave.data.repository.RescueRepository
+import com.example.dispensave.data.repository.UserRepository
 import com.example.dispensave.ui.navigation.AppNavigation
 import com.example.dispensave.ui.pantry.PantryViewModel
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val repository = PantryRepository()
-        val viewModel = PantryViewModel(repository)
+        val userRepository = UserRepository(this)
+        val rescueRepository = RescueRepository()
+        val pantryRepository = PantryRepository()
+        val viewModel = PantryViewModel(pantryRepository, userRepository, rescueRepository)
+
         setContent {
             MaterialTheme {
                 Surface(

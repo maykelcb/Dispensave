@@ -1,4 +1,4 @@
-﻿package com.example.dispensave.ui.product
+package com.example.dispensave.ui.product
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

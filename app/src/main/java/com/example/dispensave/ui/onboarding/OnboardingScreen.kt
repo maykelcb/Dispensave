@@ -1,4 +1,4 @@
-﻿package com.example.dispensave.ui.onboarding
+package com.example.dispensave.ui.onboarding
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -7,8 +7,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Eco
-import androidx.compose.material.icons.filled.Inventory2
 import androidx.compose.material.icons.filled.Restaurant
+import androidx.compose.material.icons.filled.Store
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -55,59 +55,59 @@ fun OnboardingScreen(
                 fontSize = 20.sp
             )
         }
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.height(26.dp))
 
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(160.dp),
+                .height(150.dp),
             shape = RoundedCornerShape(20.dp),
             color = Color(0xFFF0F7F4)
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Text(
-                    text = "🥗 🥑 🍳 🍞",
+                    text = "🥐 🍲 🥖 🥑",
                     fontSize = 42.sp
                 )
             }
         }
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(22.dp))
 
         Text(
-            text = "¡Salva comida, cuida tu bolsillo!",
-            fontSize = 24.sp,
+            text = "¡Salva comida deliciosa a precio de rescate!",
+            fontSize = 23.sp,
             fontWeight = FontWeight.Bold,
             color = GreenPrimary,
             textAlign = TextAlign.Center
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "La app pensada para estudiantes. Controla lo que compras en el súper, recibe alertas antes de que venza tu comida y cocina recetas geniales con lo que te queda.",
+            text = "Conectamos restaurantes y panaderías con personas para rescatar excedentes del día con hasta 70% de descuento. Come rico, ahorra y cuida el planeta.",
             fontSize = 13.sp,
             color = Color.Gray,
             textAlign = TextAlign.Center,
-            lineHeight = 19.sp
+            lineHeight = 18.sp
         )
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(22.dp))
 
         FeatureItem(
-            icon = Icons.Default.Inventory2,
-            title = "Inventario inteligente",
-            description = "No más limones olvidados al fondo de la repisa."
+            icon = Icons.Default.Restaurant,
+            title = "Packs Sorpresa con 70% desc.",
+            description = "Rescata comida fresca recién preparada de locales top de tu zona."
         )
         Spacer(modifier = Modifier.height(12.dp))
         FeatureItem(
-            icon = Icons.Default.Restaurant,
-            title = "Recetas de Rescate",
-            description = "Usa lo que se va a vencer y ahorra en el menú semanal."
+            icon = Icons.Default.Store,
+            title = "Para Clientes y Comercios",
+            description = "Restaurantes y panaderías recuperan costos y evitan desperdiciar."
         )
         Spacer(modifier = Modifier.height(12.dp))
         FeatureItem(
             icon = Icons.Default.Eco,
-            title = "Menos desperdicio, más eco",
-            description = "Reduce tu huella de carbono y gana medallas universitarias."
+            title = "Impacto ecológico real",
+            description = "Cada pack rescatado evita 2.5 kg de CO2 en el medio ambiente."
         )
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.height(26.dp))
 
         Button(
             onClick = onStartClick,

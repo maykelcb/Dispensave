@@ -1,10 +1,10 @@
 package com.example.dispensave.data.repository
 
 import com.example.dispensave.domain.model.Product
-import com.example.dispensave.domain.model.ProductStatus
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+
 class PantryRepository {
 
     private val _products = MutableStateFlow(
@@ -52,6 +52,7 @@ class PantryRepository {
         )
     )
     val allProducts: Flow<List<Product>> = _products.asStateFlow()
+
     suspend fun addProduct(product: Product): Long {
         val current = _products.value.toMutableList()
         val newId = (current.maxOfOrNull { it.id } ?: 0) + 1
@@ -59,6 +60,7 @@ class PantryRepository {
         _products.value = current
         return newId.toLong()
     }
+
     suspend fun updateProduct(product: Product) {
         val current = _products.value.toMutableList()
         val index = current.indexOfFirst { it.id == product.id }
@@ -67,6 +69,7 @@ class PantryRepository {
             _products.value = current
         }
     }
+
     suspend fun deleteProduct(product: Product) {
         val current = _products.value.toMutableList()
         current.removeAll { it.id == product.id }

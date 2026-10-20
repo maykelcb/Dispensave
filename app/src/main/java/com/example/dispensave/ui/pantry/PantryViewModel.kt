@@ -1,12 +1,14 @@
-﻿package com.example.dispensave.ui.pantry
+package com.example.dispensave.ui.pantry
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dispensave.data.repository.PantryRepository
-import com.example.dispensave.domain.model.Product
+import com.example.dispensave.data.repository.*
+import com.example.dispensave.domain.model.*
+import com.example.dispensave.util.ValidationUtils
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -22,160 +24,229 @@ data class ProductValidationResult(
     val unitError: String? = null
 )
 
-class PantryViewModel(private val repository: PantryRepository) : ViewModel() {
+class PantryViewModel(
+    private val repository: PantryRepository,
+    private val userRepository: UserRepository = UserRepository(),
+    private val rescueRepository: RescueRepository = RescueRepository()
+) : ViewModel() {
 
-    val products: StateFlow<List<Product>> = repository.allProducts
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
-        )
+    // --- MÓDULO MARKETPLACE DE RESCATE ---
+    val surplusBags: StateFlow<List<SurplusBag>> = rescueRepository.surplusBags
+        .stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(5000), initialValue = emptyList())
 
-    var selectedProduct by mutableStateOf<Product?>(null)
+    val orders: StateFlow<List<Order>> = rescueRepository.orders
+        .stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(5000), initialValue = emptyList())
+
+    var currentUserRole by mutableStateOf(UserRole.CLIENTE)
+        private set
+
+    var currentStoreName by mutableStateOf<String?>(null)
+        private set
+
+    var currentStoreCategory by mutableStateOf<StoreCategory?>(null)
+        private set
+
+    var userName by mutableStateOf("Maykel Bernaola")
         private set
 
     var userEmail by mutableStateOf("maykel@universidad.edu.pe")
         private set
 
-    fun setUserEmailAddress(email: String) {
-        userEmail = email
-    }
+    // --- INVENTARIO DEL COMERCIO (catálogo propio de productos que vende) ---
+    private val _merchantInventory = mutableStateListOf<MerchantProduct>()
+    val merchantInventory: List<MerchantProduct> get() = _merchantInventory
 
-    fun selectProduct(product: Product?) {
-        selectedProduct = product
-    }
+    private var _nextProductId = 1
 
-    // Regla 1: Validación del Nombre del Producto
-    // No se permite registrar productos con nombres vacíos o menores a 2 caracteres.
-    // Mensaje de error: "El nombre del producto debe contener al menos 2 caracteres"
-    fun validateProductName(name: String): String? {
+    fun addMerchantProduct(name: String, stock: Int, unit: String): Boolean {
         val trimmed = name.trim()
-        return if (trimmed.length < 2) {
-            "El nombre del producto debe contener al menos 2 caracteres"
-        } else null
+        if (trimmed.length < 2) return false
+        if (_merchantInventory.any { it.name.equals(trimmed, ignoreCase = true) }) return false
+        _merchantInventory.add(MerchantProduct(id = _nextProductId++, name = trimmed, stock = stock, unit = unit))
+        return true
     }
 
-    // Regla 2: Validación de Fecha de Vencimiento
-    // La fecha seleccionada debe ser válida y estar definida. Si la fecha es menor a la fecha actual,
-    // el sistema asigna automáticamente el estado "Vencido" al producto.
-    // Mensaje de advertencia: "Este producto ya está vencido, consúmelo o deséchalo pronto"
+    fun updateMerchantProductStock(productId: Int, newStock: Int) {
+        val idx = _merchantInventory.indexOfFirst { it.id == productId }
+        if (idx >= 0 && newStock >= 0) {
+            _merchantInventory[idx] = _merchantInventory[idx].copy(stock = newStock)
+        }
+    }
+
+    fun removeMerchantProduct(productId: Int) {
+        _merchantInventory.removeAll { it.id == productId }
+    }
+
+    fun getMerchantInventoryNames(): List<String> = _merchantInventory.map { it.name }
+
+    // Pedidos filtrados para el comercio (los que generaron los clientes para sus bags)
+    fun getMerchantPendingOrders(): List<Order> {
+        val myStoreName = currentStoreName ?: userName
+        return orders.value.filter { it.storeName.equals(myStoreName, ignoreCase = true) }
+    }
+
+    fun setCurrentUser(user: User) {
+        userName = user.name
+        userEmail = user.email
+        currentUserRole = user.role
+        currentStoreName = user.storeName
+        currentStoreCategory = user.storeCategory
+        // Limpiar inventario al cambiar de usuario
+        _merchantInventory.clear()
+        _nextProductId = 1
+    }
+
+    fun isEmailRegistered(email: String): Boolean = userRepository.isEmailRegistered(email)
+
+    fun registerUser(
+        name: String,
+        email: String,
+        password: String,
+        role: UserRole = UserRole.CLIENTE,
+        storeName: String? = null,
+        storeCategory: StoreCategory? = null
+    ): RegisterResult {
+        val user = User(
+            name = name,
+            email = email,
+            password = password,
+            role = role,
+            storeName = if (role == UserRole.COMERCIO) storeName else null,
+            storeCategory = if (role == UserRole.COMERCIO) storeCategory else null
+        )
+        val result = userRepository.registerUser(user)
+        if (result is RegisterResult.Success) setCurrentUser(user)
+        return result
+    }
+
+    fun loginUser(email: String, password: String): LoginResult {
+        val result = userRepository.login(email, password)
+        if (result is LoginResult.Success) setCurrentUser(result.user)
+        return result
+    }
+
+    fun reserveSurplusBag(bag: SurplusBag): Order? = rescueRepository.reserveBag(bag.id)
+
+    fun publishSurplusBag(
+        title: String,
+        category: StoreCategory,
+        description: String,
+        originalPrice: Double,
+        rescuePrice: Double,
+        pickupWindow: String,
+        quantity: Int,
+        offerType: OfferType = OfferType.PACK,
+        includedItems: List<String> = emptyList()
+    ): Boolean {
+        if (title.isBlank() || originalPrice <= 0 || rescuePrice <= 0 || quantity <= 0) return false
+        val newBag = SurplusBag(
+            id = 0,
+            storeId = 999,
+            storeName = currentStoreName ?: userName,
+            category = category,
+            offerType = offerType,
+            title = title.trim(),
+            description = description.trim().ifEmpty {
+                if (offerType == OfferType.PACK) "Pack variado con excedentes frescos del día empacados con cuidado."
+                else "Producto excedente del día preparado con ingredientes de primera calidad."
+            },
+            includedItems = includedItems,
+            originalPrice = originalPrice,
+            rescuePrice = rescuePrice,
+            pickupTimeWindow = pickupWindow.trim().ifEmpty { "20:00 - 21:00" },
+            stockAvailable = quantity
+        )
+        rescueRepository.publishBag(newBag)
+        // Si el producto existe en inventario, descontar stock
+        includedItems.forEach { itemName ->
+            val idx = _merchantInventory.indexOfFirst { it.name.equals(itemName, ignoreCase = true) }
+            if (idx >= 0) {
+                val current = _merchantInventory[idx]
+                if (current.stock > 0) {
+                    _merchantInventory[idx] = current.copy(stock = current.stock - 1)
+                }
+            }
+        }
+        return true
+    }
+
+    fun confirmMerchantOrderPickup(orderId: Int): Boolean = rescueRepository.confirmPickup(orderId)
+
+    fun confirmOrderPickup(orderId: Int): Boolean = rescueRepository.confirmPickup(orderId)
+
+    // --- MÓDULO ANTERIOR DE DESPENSA (Mantenido para compatibilidad) ---
+    val products: StateFlow<List<Product>> = repository.allProducts
+        .stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(5000), initialValue = emptyList())
+
+    var selectedProduct by mutableStateOf<Product?>(null)
+        private set
+
+    fun selectProduct(product: Product?) { selectedProduct = product }
+
+    fun validateProductName(name: String): String? {
+        return if (name.trim().length < 2) "El nombre debe tener al menos 2 caracteres" else null
+    }
+
     fun validateExpirationDate(expirationDate: Long?): String? {
-        return if (expirationDate == null || expirationDate <= 0L) {
-            "La fecha seleccionada debe ser válida y estar definida"
-        } else null
+        return if (expirationDate == null || expirationDate <= 0L) "La fecha seleccionada debe ser válida" else null
     }
 
     fun isDateExpired(expirationDate: Long): Boolean {
         val now = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
+            set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0); set(Calendar.MILLISECOND, 0)
         }.timeInMillis
-        val exp = Calendar.getInstance().apply {
-            timeInMillis = expirationDate
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }.timeInMillis
-        return exp < now || expirationDate < System.currentTimeMillis()
+        return expirationDate < now
     }
 
     fun getExpirationWarning(expirationDate: Long): String? {
-        return if (isDateExpired(expirationDate)) {
-            "Este producto ya está vencido, consúmelo o deséchalo pronto"
-        } else null
+        return if (isDateExpired(expirationDate)) "Este producto ya está vencido" else null
     }
 
-    // Regla 3: Validación de Cantidad y Unidad
-    // La cantidad debe ser un número entero mayor a cero (> 0).
-    // Mensaje de error: "La cantidad debe ser mayor a 0"
     fun validateQuantity(quantity: Int?): String? {
-        return if (quantity == null || quantity <= 0) {
-            "La cantidad debe ser mayor a 0"
-        } else null
+        return if (quantity == null || quantity <= 0) "La cantidad debe ser mayor a 0" else null
     }
 
     fun validateUnit(unit: String): String? {
-        return if (unit.trim().isEmpty()) {
-            "La unidad es requerida"
-        } else null
+        return if (unit.trim().isEmpty()) "La unidad es requerida" else null
     }
 
-    // Regla 4: Validación de Formato de Correo Electrónico
-    // Utiliza la expresión regular de EmailAddress de Android para garantizar el estándar usuario@dominio.com.
-    fun validateEmail(email: String): String? {
-        val trimmed = email.trim()
-        if (trimmed.isEmpty()) {
-            return "El correo electrónico es requerido"
-        }
-        val isValid = android.util.Patterns.EMAIL_ADDRESS.matcher(trimmed).matches()
-        return if (!isValid) {
-            "Formato de correo no válido (ejemplo: usuario@dominio.com)"
-        } else null
-    }
+    fun validateEmail(email: String): String? = ValidationUtils.validateEmailStrict(email)
 
-    // Validación integral para el registro de producto
-    fun validateProduct(
-        name: String,
-        expirationDate: Long?,
-        quantity: Int?,
-        unit: String
-    ): ProductValidationResult {
+    fun validateProduct(name: String, expirationDate: Long?, quantity: Int?, unit: String): ProductValidationResult {
         val nameErr = validateProductName(name)
         val expErr = validateExpirationDate(expirationDate)
         val expWarn = if (expirationDate != null) getExpirationWarning(expirationDate) else null
         val qtyErr = validateQuantity(quantity)
         val unitErr = validateUnit(unit)
-
-        val isValid = nameErr == null && expErr == null && qtyErr == null && unitErr == null
         return ProductValidationResult(
-            isValid = isValid,
-            nameError = nameErr,
-            expirationError = expErr,
-            expirationWarning = expWarn,
-            quantityError = qtyErr,
-            unitError = unitErr
+            isValid = nameErr == null && expErr == null && qtyErr == null && unitErr == null,
+            nameError = nameErr, expirationError = expErr, expirationWarning = expWarn,
+            quantityError = qtyErr, unitError = unitErr
         )
     }
 
-    fun addProduct(
-        name: String,
-        category: String,
-        expirationDate: Long,
-        quantity: Int,
-        unit: String
-    ): Boolean {
+    fun addProduct(name: String, category: String, expirationDate: Long, quantity: Int, unit: String): Boolean {
         val validation = validateProduct(name, expirationDate, quantity, unit)
-        if (!validation.isValid) {
-            return false
-        }
+        if (!validation.isValid) return false
         viewModelScope.launch {
-            val product = Product(
+            repository.addProduct(Product(
                 name = name.trim(),
                 category = category.trim().ifEmpty { "Abarrotes" },
                 expirationDate = expirationDate,
                 quantity = quantity,
                 unit = unit.trim().ifEmpty { "unidad" }
-            )
-            repository.addProduct(product)
+            ))
         }
         return true
     }
 
-    fun updateProduct(product: Product) {
-        viewModelScope.launch {
-            repository.updateProduct(product)
-        }
-    }
+    fun updateProduct(product: Product) { viewModelScope.launch { repository.updateProduct(product) } }
 
     fun deleteProduct(product: Product) {
         viewModelScope.launch {
             repository.deleteProduct(product)
-            if (selectedProduct?.id == product.id) {
-                selectedProduct = null
-            }
+            if (selectedProduct?.id == product.id) selectedProduct = null
         }
     }
 }
