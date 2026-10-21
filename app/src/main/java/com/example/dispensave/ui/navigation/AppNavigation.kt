@@ -24,10 +24,12 @@ import com.example.dispensave.ui.merchant.StoreDashboardScreen
 import com.example.dispensave.ui.onboarding.OnboardingScreen
 import com.example.dispensave.ui.orders.MyOrdersScreen
 import com.example.dispensave.ui.pantry.PantryViewModel
+import com.example.dispensave.ui.screens.shopping.ShoppingListScreen
 import com.example.dispensave.ui.theme.GreenPrimary
 
 sealed class ItemNavInferior(val ruta: String, val titulo: String, val icono: ImageVector) {
     object Explorar : ItemNavInferior("explore", "Explorar", Icons.Default.Search)
+    object Compras : ItemNavInferior("shopping", "Compras", Icons.Default.ShoppingCart)
     object MisRescates : ItemNavInferior("orders", "Mis Rescates", Icons.Default.ConfirmationNumber)
     object Pedidos : ItemNavInferior("orders", "Pedidos", Icons.Default.Receipt)
     object Impacto : ItemNavInferior("impact", "Impacto CO2", Icons.Default.Eco)
@@ -95,6 +97,7 @@ fun ContenedorPrincipal(
 
     val itemsCliente = listOf(
         ItemNavInferior.Explorar,
+        ItemNavInferior.Compras,
         ItemNavInferior.MisRescates,
         ItemNavInferior.Impacto
     )
@@ -130,6 +133,11 @@ fun ContenedorPrincipal(
         Box(modifier = Modifier.padding(padding)) {
             when (tabSeleccionado) {
                 "explore" -> ExploreScreen(viewModel = viewModel, onLogoutClick = onLogout)
+                "shopping" -> ShoppingListScreen(
+                    viewModel = viewModel,
+                    onBackClick = { tabSeleccionado = "explore" },
+                    onGoToPantryClick = { tabSeleccionado = "explore" }
+                )
                 "orders" -> MyOrdersScreen(viewModel = viewModel)
                 "impact" -> ImpactScreen()
                 "store" -> StoreDashboardScreen(viewModel = viewModel, onLogoutClick = onLogout)

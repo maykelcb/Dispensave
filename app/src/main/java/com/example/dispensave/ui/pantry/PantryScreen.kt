@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.dispensave.domain.model.Product
 import com.example.dispensave.domain.model.ProductStatus
+import com.example.dispensave.ui.components.ExpirationBadge
 import com.example.dispensave.ui.theme.AlertOrange
 import com.example.dispensave.ui.theme.AlertRed
 import com.example.dispensave.ui.theme.GreenPrimary
@@ -31,7 +33,8 @@ import com.example.dispensave.ui.theme.GreenPrimary
 fun PantryScreen(
     viewModel: PantryViewModel,
     onAddProductClick: () -> Unit,
-    onProductClick: (Product) -> Unit
+    onProductClick: (Product) -> Unit,
+    onGoToShoppingListClick: () -> Unit = {}
 ) {
     val products by viewModel.products.collectAsState()
     var searchQuery by remember { mutableStateOf("") }
@@ -65,17 +68,44 @@ fun PantryScreen(
                 .padding(horizontal = 16.dp)
         ) {
             Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Mi Despensa",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = GreenPrimary
-            )
-            Text(
-                text = "${filteredProducts.size} alimentos registrados",
-                fontSize = 13.sp,
-                color = Color.Gray
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(
+                        text = "Mi Despensa",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = GreenPrimary
+                    )
+                    Text(
+                        text = "${filteredProducts.size} alimentos registrados",
+                        fontSize = 13.sp,
+                        color = Color.Gray
+                    )
+                }
+                FilledTonalButton(
+                    onClick = onGoToShoppingListClick,
+                    colors = ButtonDefaults.filledTonalButtonColors(containerColor = Color(0xFFE8F5E9)),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Icon(
+                        Icons.Default.ShoppingCart,
+                        contentDescription = null,
+                        tint = GreenPrimary,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "Compras",
+                        color = GreenPrimary,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(14.dp))
 
             OutlinedTextField(
@@ -206,12 +236,8 @@ private fun ProductItemCard(
                     fontSize = 12.sp,
                     color = Color.Gray
                 )
-                Text(
-                    text = statusText,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = badgeColor
-                )
+                Spacer(modifier = Modifier.height(4.dp))
+                ExpirationBadge(product = product, compact = true)
             }
             Icon(
                 imageVector = Icons.Default.ChevronRight,
