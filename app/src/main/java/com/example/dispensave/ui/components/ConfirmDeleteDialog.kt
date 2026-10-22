@@ -3,7 +3,7 @@ package com.example.dispensave.ui.components
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.WarningAmber
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -35,7 +35,7 @@ fun ConfirmDeleteDialog(
             containerColor = Color.White,
             icon = {
                 Icon(
-                    imageVector = Icons.Default.WarningAmber,
+                    imageVector = Icons.Default.Warning,
                     contentDescription = null,
                     tint = AlertRed
                 )
