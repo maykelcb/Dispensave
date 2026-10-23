@@ -1,93 +1,117 @@
-# DispenSave
+﻿# DispenSave
 
 > Plataforma de rescate de comida al estilo Too Good To Go para el mercado peruano.
 
-**DispenSave** conecta a restaurantes, panaderias, cafeterias y pastelerias locales con consumidores
+**DispenSave** conecta a restaurantes, panaderías, cafeterías y pastelerías locales con consumidores
 que quieren adquirir excedentes de comida fresca a precios de rescate (60-75% de descuento),
-reduciendo el desperdicio alimentario de forma practica y sostenible.
+reduciendo el desperdicio alimentario de forma práctica y sostenible.
 
 ---
 
-## Equipo de Desarrollo
+## Equipo de Desarrollo y Ramas Oficiales en GitHub
 
-| Parte | Responsable | Estado | Documentacion |
-|-------|-------------|--------|---------------|
-| Parte 1 | Maykel  | COMPLETADO | [docs/documento_parte1_dispensave.md](docs/documento_parte1_dispensave.md) |
-| Parte 2 | Ruben   | PENDIENTE  | [docs/parte2_ruben.md](docs/parte2_ruben.md) |
-| Parte 3 | Luis    | PENDIENTE  | [docs/parte3_luis.md](docs/parte3_luis.md) |
-| Parte 4 | Andy    | PENDIENTE  | [docs/parte4_andy.md](docs/parte4_andy.md) |
+| Parte | Integrante | Rol | Rama Oficial de Git | Estado | Documentación |
+|:---:|:---|:---|:---:|:---:|:---|
+| **Parte 1** | **Maykel Bernaola** (`maykelcb`) | Líder Técnico & Arquitectura MVVM | `main` | **COMPLETADO** | [docs/documento_parte1_dispensave.md](docs/documento_parte1_dispensave.md) |
+| **Parte 2** | **Rubén** | Desarrollador APIs & Retrofit REST | `feature/retrofit-api-consumption` | PENDIENTE | [docs/parte2_ruben.md](docs/parte2_ruben.md) |
+| **Parte 3** | **Luis** | Desarrollador SQLite & Room Database | `feature/room-crud-pantry` | PENDIENTE | [docs/parte3_luis.md](docs/parte3_luis.md) |
+| **Parte 4** | **Anderson Abanto** (`Anderson08102001`) | Desarrollador UI/UX & Lista de Compras | `feature/shopping-list-alerts` | **IMPLEMENTADO** | [docs/parte4_shopping_alerts.md](docs/parte4_shopping_alerts.md) |
 
 ---
 
-## Como empezar (para Ruben, Luis y Andy)
+## Cómo empezar (para cada integrante del equipo)
 
-1. Clona el repositorio:
+1. **Clonar el repositorio:**
+   ```bash
    git clone https://github.com/maykelcb/DispenSave.git
+   cd DispenSave
+   ```
 
-2. Abre en Android Studio (version Hedgehog o superior recomendada)
+2. **Abrir en Android Studio** (versión Ladybug / Hedgehog o superior).
 
-3. Lee TU documentacion especifica antes de tocar cualquier codigo:
-   - Ruben: docs/parte2_ruben.md
-   - Luis:  docs/parte3_luis.md
-   - Andy:  docs/parte4_andy.md
+3. **Cambiar a TU rama asignada antes de programar:**
+   ```bash
+   # Para Maykel (Líder / Integración):
+   git checkout main
 
-4. Crea tu propia rama de trabajo:
-   git checkout -b feature/parte2-ruben      (Ruben)
-   git checkout -b feature/parte3-luis       (Luis)
-   git checkout -b feature/parte4-andy       (Andy)
+   # Para Anderson (Compras y Alertas UX):
+   git checkout feature/shopping-list-alerts
 
-5. Haz tus cambios, commitea frecuentemente y sube tu rama:
+   # Para Luis (Persistencia Room CRUD):
+   git checkout feature/room-crud-pantry
+
+   # Para Rubén (Consumo de API REST Retrofit):
+   git checkout feature/retrofit-api-consumption
+   ```
+
+4. **Leer tu documentación específica:**
+   - Asignación maestra: [docs/DISTRIBUCION_INFORME_EQUIPO.md](docs/DISTRIBUCION_INFORME_EQUIPO.md)
+   - Maykel: [docs/documento_parte1_dispensave.md](docs/documento_parte1_dispensave.md)
+   - Rubén: [docs/parte2_ruben.md](docs/parte2_ruben.md)
+   - Luis: [docs/parte3_luis.md](docs/parte3_luis.md)
+   - Anderson: [docs/parte4_shopping_alerts.md](docs/parte4_shopping_alerts.md)
+
+5. **Guardar cambios y subir a GitHub:**
+   ```bash
    git add -A
-   git commit -m "feat(parte2): descripcion del cambio"
-   git push origin feature/parte2-ruben
+   git commit -m "feat(modulo): descripcion clara del cambio"
+   git push origin <tu-rama-asignada>
+   ```
 
-6. Cuando termines, crea un Pull Request en GitHub hacia main y avisa a Maykel
+6. **Crear Pull Request en GitHub hacia `main`** para que Maykel revise y fusione.
 
 ---
 
 ## IMPORTANTE: Reglas para no romper el proyecto
 
-- NO modificar PantryViewModel.kt sin coordinar con Maykel
-- NO cambiar las firmas de registerUser(), loginUser(), publishSurplusBag()
-- NO modificar los modelos en domain/model/ sin coordinar con todo el equipo
-- SIEMPRE trabajar en tu propia rama, nunca pushear directo a main
-- Hacer commits pequenos y descriptivos (no un solo commit con todo)
+- NO modificar `PantryViewModel.kt` sin coordinar con Maykel.
+- NO cambiar las firmas de `registerUser()`, `loginUser()`, `publishSurplusBag()`.
+- NO modificar los modelos en `domain/model/` sin coordinar con el equipo.
+- SIEMPRE trabajar en tu propia rama asignada, nunca hacer push directo a `main`.
+- Hacer commits atómicos y descriptivos siguiendo Conventional Commits (`feat:`, `fix:`, `docs:`).
 
 ---
 
 ## Cuentas de prueba para testear
 
-| Correo | Contrasena | Rol | Categoria |
-|--------|-----------|-----|-----------|
+| Correo | Contraseña | Rol | Categoría |
+|--------|------------|-----|-----------|
 | maykel@universidad.edu.pe | Password123* | Cliente | - |
 | maykelcb095@gmail.com | Password123* | Cliente | - |
-| labaguette@gmail.com | Password123* | Comercio | Panaderia |
+| labaguette@gmail.com | Password123* | Comercio | Panadería |
 | saborcriollo@gmail.com | Password123* | Comercio | Restaurante |
 
 ---
 
-## Funcionalidades de Parte 1 (COMPLETADO)
+## Funcionalidades Implementadas
 
-- Registro con validacion estricta (correo real, nombre min 3 letras, contrasena segura)
-- Seleccion obligatoria de rubro al registrar comercio (Panaderia / Restaurante / Cafeteria / Pasteleria)
-- Catalogo propio del comercio: agrega productos libremente, control de stock con +/-
-- Publicar Producto Individual: selecciona 1 producto del catalogo
-- Publicar Pack de Hoy: multi-seleccion con mayor descuento (60-75%)
-- Validacion numerica estricta en precios y cantidades
-- Franjas horarias predefinidas (chips, sin texto libre)
-- Vista del cliente: packs con contenido visible, badge de descuento, precio original tachado
-- Pedidos de clientes en el panel del comercio con confirmacion de entrega
-- Pantalla de pedidos adaptada segun rol (cliente vs comercio)
+### Parte 1 (Maykel - `main`):
+- Registro con validación estricta (correo, nombre min 3 letras, contraseña segura).
+- Selección obligatoria de rubro al registrar comercio (Panadería, Restaurante, Cafetería, Pastelería).
+- Catálogo propio del comercio: agregar productos libremente y control de stock.
+- Publicar Producto Individual y Publicar Pack de Hoy (60-75% de descuento).
+- Contenedor de navegación dinámico por rol (`AppNavigation.kt`).
+
+### Parte 4 (Anderson - `feature/shopping-list-alerts`):
+- Módulo interactivo de Lista de Compras (`ShoppingListScreen.kt`) con checkbox reactivo.
+- Traslado automatizado de compras completadas a la despensa virtual.
+- Semáforo visual de caducidad (`ExpirationBadge.kt`: 🟢 >7d, 🟡 ≤3d, 🔴 vencido).
+- Diálogo modal de confirmación destructiva (`ConfirmDeleteDialog.kt`).
 
 ---
 
-## Estructura del Proyecto
+## Estructura de Paquetes
 
+```
 app/src/main/java/com/example/dispensave/
-  data/repository/         RescueRepository, UserRepository, PantryRepository
-  domain/model/            User, SurplusBag, Order, MerchantProduct, etc.
+  data/
+    local/                 AppDatabase, ProductDao, ProductEntity (Parte 3 - Luis)
+    remote/                Retrofit client, API service, DTOs (Parte 2 - Rubén)
+    repository/            RescueRepository, UserRepository, PantryRepository
+  domain/model/            User, SurplusBag, Order, MerchantProduct, ShoppingItem
   ui/
     auth/                  LoginScreen, RegisterScreen
+    components/            ExpirationBadge, ConfirmDeleteDialog
     home/                  ExploreScreen (cliente)
     merchant/              StoreDashboardScreen (comercio)
     navigation/            AppNavigation
@@ -95,4 +119,6 @@ app/src/main/java/com/example/dispensave/
     orders/                MyOrdersScreen (adaptado por rol)
     impact/                ImpactScreen
     pantry/                PantryScreen, PantryViewModel
-  util/ValidationUtils.kt
+    screens/shopping/      ShoppingListScreen
+  util/                    ValidationUtils
+```
