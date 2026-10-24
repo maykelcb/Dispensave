@@ -16,6 +16,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.dispensave.domain.model.ProductStatus
+import com.example.dispensave.ui.components.ConfirmDeleteDialog
+import com.example.dispensave.ui.components.ExpirationBadge
 import com.example.dispensave.ui.pantry.PantryViewModel
 import com.example.dispensave.ui.theme.AlertOrange
 import com.example.dispensave.ui.theme.AlertRed
@@ -34,6 +36,7 @@ fun ProductDetailScreen(
     val category = "${product?.category ?: "Lácteos"} • ${product?.unit ?: "unidad"}"
     var quantity by remember(product) { mutableIntStateOf(product?.quantity ?: 1) }
     var pushNotificationEnabled by remember { mutableStateOf(true) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     val status = product?.calculatedStatus ?: ProductStatus.DISPONIBLE
     val isExpired = product?.isExpired ?: false
@@ -61,10 +64,7 @@ fun ProductDetailScreen(
                 },
                 actions = {
                     if (product != null) {
-                        IconButton(onClick = {
-                            viewModel.deleteProduct(product)
-                            onDeleteSuccess()
-                        }) {
+                        IconButton(onClick = { showDeleteDialog = true }) {
                             Icon(Icons.Default.Delete, contentDescription = "Eliminar", tint = Color(0xFFD32F2F))
                         }
                     }
@@ -235,15 +235,25 @@ fun ProductDetailScreen(
             }
             Spacer(modifier = Modifier.height(8.dp))
             TextButton(
-                onClick = {
-                    if (product != null) {
-                        viewModel.deleteProduct(product)
-                    }
-                    onDeleteSuccess()
-                }
+                onClick = { showDeleteDialog = true }
             ) {
                 Text("Eliminar insumo", color = Color(0xFFD32F2F), fontSize = 13.sp)
             }
         }
+    }
+
+    if (showDeleteDialog && product != null) {
+        ConfirmDeleteDialog(
+            show = true,
+            itemName = product.name,
+            title = "Eliminar de la Despensa",
+            message = "¿Estás seguro de que deseas eliminar '${product.name}' de tu despensa? Esta acción es definitiva.",
+            onConfirm = {
+                viewModel.deleteProduct(product)
+                showDeleteDialog = false
+                onDeleteSuccess()
+            },
+            onDismiss = { showDeleteDialog = false }
+        )
     }
 }

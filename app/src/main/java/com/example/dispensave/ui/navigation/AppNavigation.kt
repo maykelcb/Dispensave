@@ -23,10 +23,16 @@ import com.example.dispensave.ui.impact.ImpactScreen
 import com.example.dispensave.ui.merchant.StoreDashboardScreen
 import com.example.dispensave.ui.onboarding.OnboardingScreen
 import com.example.dispensave.ui.orders.MyOrdersScreen
+import com.example.dispensave.ui.pantry.AddProductDialog
+import com.example.dispensave.ui.pantry.PantryScreen
 import com.example.dispensave.ui.pantry.PantryViewModel
+import com.example.dispensave.ui.product.ProductDetailScreen
+import com.example.dispensave.ui.screens.shopping.ShoppingListScreen
 import com.example.dispensave.ui.theme.GreenPrimary
 
 sealed class ItemNavInferior(val ruta: String, val titulo: String, val icono: ImageVector) {
+    object Despensa : ItemNavInferior("pantry", "Despensa", Icons.Default.Kitchen)
+    object Compras : ItemNavInferior("shopping", "Compras", Icons.Default.ShoppingCart)
     object Explorar : ItemNavInferior("explore", "Explorar", Icons.Default.Search)
     object MisRescates : ItemNavInferior("orders", "Mis Rescates", Icons.Default.ConfirmationNumber)
     object Pedidos : ItemNavInferior("orders", "Pedidos", Icons.Default.Receipt)
@@ -91,9 +97,13 @@ fun ContenedorPrincipal(
     onLogout: () -> Unit
 ) {
     val esComerciante = viewModel.currentUserRole == UserRole.COMERCIO
-    var tabSeleccionado by remember { mutableStateOf(if (esComerciante) "store" else "explore") }
+    var tabSeleccionado by remember { mutableStateOf(if (esComerciante) "store" else "pantry") }
+    var showAddProductDialog by remember { mutableStateOf(false) }
+    var viewingProductDetail by remember { mutableStateOf(false) }
 
     val itemsCliente = listOf(
+        ItemNavInferior.Despensa,
+        ItemNavInferior.Compras,
         ItemNavInferior.Explorar,
         ItemNavInferior.MisRescates,
         ItemNavInferior.Impacto
@@ -114,7 +124,10 @@ fun ContenedorPrincipal(
                     val estaSeleccionado = tabSeleccionado == item.ruta
                     NavigationBarItem(
                         selected = estaSeleccionado,
-                        onClick = { tabSeleccionado = item.ruta },
+                        onClick = {
+                            tabSeleccionado = item.ruta
+                            viewingProductDetail = false
+                        },
                         icon = {
                             Icon(imageVector = item.icono, contentDescription = item.titulo, tint = if (estaSeleccionado) GreenPrimary else Color.Gray)
                         },
@@ -129,11 +142,50 @@ fun ContenedorPrincipal(
     ) { padding ->
         Box(modifier = Modifier.padding(padding)) {
             when (tabSeleccionado) {
+                "pantry" -> {
+                    if (viewingProductDetail && viewModel.selectedProduct != null) {
+                        ProductDetailScreen(
+                            viewModel = viewModel,
+                            onBackClick = { viewingProductDetail = false },
+                            onSaveSuccess = { viewingProductDetail = false },
+                            onDeleteSuccess = { viewingProductDetail = false }
+                        )
+                    } else {
+                        PantryScreen(
+                            viewModel = viewModel,
+                            onAddProductClick = { showAddProductDialog = true },
+                            onProductClick = { product ->
+                                viewModel.selectProduct(product)
+                                viewingProductDetail = true
+                            },
+                            onGoToShoppingListClick = {
+                                tabSeleccionado = "shopping"
+                                viewingProductDetail = false
+                            }
+                        )
+                    }
+                }
+                "shopping" -> ShoppingListScreen(
+                    viewModel = viewModel,
+                    onBackClick = { tabSeleccionado = "pantry" },
+                    onGoToPantryClick = { tabSeleccionado = "pantry" }
+                )
                 "explore" -> ExploreScreen(viewModel = viewModel, onLogoutClick = onLogout)
                 "orders" -> MyOrdersScreen(viewModel = viewModel)
                 "impact" -> ImpactScreen()
                 "store" -> StoreDashboardScreen(viewModel = viewModel, onLogoutClick = onLogout)
             }
         }
+    }
+
+    if (showAddProductDialog) {
+        AddProductDialog(
+            viewModel = viewModel,
+            onDismiss = { showAddProductDialog = false },
+            onAdd = { name, category, expDate, qty, unit ->
+                viewModel.addProduct(name, category, expDate, qty, unit)
+                showAddProductDialog = false
+            }
+        )
     }
 }
