@@ -14,6 +14,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import com.example.dispensave.data.model.RemoteFoodProductDto
+import com.example.dispensave.data.remote.RetrofitClient
+
+sealed class ProductSearchUiState {
+    object Idle : ProductSearchUiState()
+    object Loading : ProductSearchUiState()
+    data class Success(val products: List<RemoteFoodProductDto>) : ProductSearchUiState()
+    data class Error(val message: String) : ProductSearchUiState()
+}
 
 data class ProductValidationResult(
     val isValid: Boolean,
@@ -248,5 +257,59 @@ class PantryViewModel(
             repository.deleteProduct(product)
             if (selectedProduct?.id == product.id) selectedProduct = null
         }
+    }
+
+    // --- PARTE 3 (API REST): BÚSQUEDA ONLINE CON RETROFIT Y GUARDADO EN ROOM ---
+
+    var searchQuery by mutableStateOf("")
+        private set
+
+    var searchUiState by mutableStateOf<ProductSearchUiState>(ProductSearchUiState.Idle)
+        private set
+
+    fun onSearchQueryChange(newQuery: String) {
+        searchQuery = newQuery
+    }
+
+    fun searchRemoteProducts(query: String = searchQuery) {
+        val cleanQuery = query.trim()
+        if (cleanQuery.length < 2) {
+            searchUiState = ProductSearchUiState.Error("Ingresa al menos 2 caracteres para buscar en el catálogo online.")
+            return
+        }
+
+        searchUiState = ProductSearchUiState.Loading
+
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.apiService.searchProducts(query = cleanQuery)
+                val validProducts = response.products.filter {
+                    !it.productName.isNullOrBlank() || !it.productNameEs.isNullOrBlank()
+                }
+                if (validProducts.isEmpty()) {
+                    searchUiState = ProductSearchUiState.Error("No se encontraron alimentos para \"$cleanQuery\". Intenta con otro término (ej. leche, avena, arroz, atún).")
+                } else {
+                    searchUiState = ProductSearchUiState.Success(validProducts)
+                }
+            } catch (e: Exception) {
+                searchUiState = ProductSearchUiState.Error(
+                    "Error de conexión con el servidor REST: Verifica tu acceso a Internet e inténtalo nuevamente."
+                )
+            }
+        }
+    }
+
+    fun addRemoteProductToPantry(remoteProduct: RemoteFoodProductDto): Boolean {
+        val defaultExpiration = Calendar.getInstance().apply {
+            add(Calendar.DAY_OF_YEAR, 14) // 14 días de vigencia por defecto al agregar a la despensa
+        }.timeInMillis
+
+        return addProduct(
+            name = "${remoteProduct.displayName} (${remoteProduct.displayBrand})",
+            category = remoteProduct.displayCategory,
+            expirationDate = defaultExpiration,
+            quantity = 1,
+            unit = remoteProduct.displayUnit
+        )
     }
 }
