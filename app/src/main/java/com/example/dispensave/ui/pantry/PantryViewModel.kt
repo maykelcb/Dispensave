@@ -361,4 +361,58 @@ class PantryViewModel(
             unit = remoteProduct.displayUnit
         )
     }
+
+    private fun getFallbackProducts(query: String): List<com.example.dispensave.data.model.RemoteFoodProductDto> {
+        val q = query.lowercase(java.util.Locale.ROOT).trim()
+        val catalog = listOf(
+            com.example.dispensave.data.model.RemoteFoodProductDto(
+                barcode = "7750106001234",
+                productName = "Arroz Extra Valle del Norte 1kg",
+                brands = "Valle del Norte",
+                categories = "Abarrotes, Cereales",
+                quantity = "1 kg"
+            ),
+            com.example.dispensave.data.model.RemoteFoodProductDto(
+                barcode = "7750106005678",
+                productName = "Arroz Superior Costeño 1kg",
+                brands = "Costeño",
+                categories = "Abarrotes, Cereales",
+                quantity = "1 kg"
+            ),
+            com.example.dispensave.data.model.RemoteFoodProductDto(
+                barcode = "7750106009876",
+                productName = "Leche Evaporada Entera Gloria 400g",
+                brands = "Gloria",
+                categories = "Lácteos",
+                quantity = "400 g"
+            ),
+            com.example.dispensave.data.model.RemoteFoodProductDto(
+                barcode = "7750106004321",
+                productName = "Avena Precocida Quaker 500g",
+                brands = "Quaker",
+                categories = "Cereales, Desayuno",
+                quantity = "500 g"
+            ),
+            com.example.dispensave.data.model.RemoteFoodProductDto(
+                barcode = "7750106008765",
+                productName = "Filete de Atún en Aceite Vegetal Florida 170g",
+                brands = "Florida",
+                categories = "Conservas, Pescados",
+                quantity = "170 g"
+            ),
+            com.example.dispensave.data.model.RemoteFoodProductDto(
+                barcode = "7750106001122",
+                productName = "Pan de Molde Blanco Bimbo 550g",
+                brands = "Bimbo",
+                categories = "Panadería",
+                quantity = "550 g"
+            )
+        )
+        val filtered = catalog.filter {
+            it.displayName.lowercase(java.util.Locale.ROOT).contains(q) ||
+            it.displayBrand.lowercase(java.util.Locale.ROOT).contains(q) ||
+            it.displayCategory.lowercase(java.util.Locale.ROOT).contains(q)
+        }
+        return if (filtered.isNotEmpty()) filtered else catalog.take(3)
+    }
 }
