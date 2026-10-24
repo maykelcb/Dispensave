@@ -9,8 +9,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.dispensave.data.repository.*
 import com.example.dispensave.domain.model.*
 import com.example.dispensave.util.ValidationUtils
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -257,6 +259,53 @@ class PantryViewModel(
             repository.deleteProduct(product)
             if (selectedProduct?.id == product.id) selectedProduct = null
         }
+    }
+
+    // --- MÓDULO LISTA DE COMPRAS Y TRASLADO AUTOMÁTICO A DESPENSA ---
+    private val _shoppingItems = MutableStateFlow<List<ShoppingItem>>(
+        listOf(
+            ShoppingItem(id = 1, name = "Huevos de corral", category = "Abarrotes", quantity = 12, unit = "unidades", isPurchased = false, defaultShelfDays = 14),
+            ShoppingItem(id = 2, name = "Leche fresca entera", category = "Lácteos", quantity = 2, unit = "litros", isPurchased = false, defaultShelfDays = 5),
+            ShoppingItem(id = 3, name = "Tomates maduros", category = "Frescos", quantity = 1, unit = "kg", isPurchased = true, defaultShelfDays = 6)
+        )
+    )
+    val shoppingItems: StateFlow<List<ShoppingItem>> = _shoppingItems.asStateFlow()
+    private var _nextShoppingId = 4
+
+    fun addShoppingItem(name: String, category: String, quantity: Int, unit: String) {
+        val newItem = ShoppingItem(
+            id = _nextShoppingId++,
+            name = name.trim(),
+            category = category.trim().ifEmpty { "Abarrotes" },
+            quantity = if (quantity > 0) quantity else 1,
+            unit = unit.trim().ifEmpty { "unidad" },
+            isPurchased = false
+        )
+        _shoppingItems.value = _shoppingItems.value + newItem
+    }
+
+    fun toggleShoppingItemPurchased(item: ShoppingItem) {
+        val willBePurchased = !item.isPurchased
+        _shoppingItems.value = _shoppingItems.value.map {
+            if (it.id == item.id) it.copy(isPurchased = willBePurchased) else it
+        }
+
+        // Si se marca como comprado, se traslada automáticamente a la despensa
+        if (willBePurchased) {
+            val daysMs = item.defaultShelfDays.toLong() * 24L * 60L * 60L * 1000L
+            val expirationDate = System.currentTimeMillis() + daysMs
+            addProduct(
+                name = item.name,
+                category = item.category,
+                expirationDate = expirationDate,
+                quantity = item.quantity,
+                unit = item.unit
+            )
+        }
+    }
+
+    fun deleteShoppingItem(item: ShoppingItem) {
+        _shoppingItems.value = _shoppingItems.value.filter { it.id != item.id }
     }
 
     // --- PARTE 3 (API REST): BÚSQUEDA ONLINE CON RETROFIT Y GUARDADO EN ROOM ---
