@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>DispenSave — Diagramas y Gráficos Renderizados</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --accent: #2ea043;
+      --sub: #8b949e;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 28px;
+      color: #58a6ff;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 12px;
+      margin-bottom: 24px;
+    }
+    h2 {
+      font-size: 20px;
+      color: #7ee787;
+      margin-top: 36px;
+      margin-bottom: 12px;
+    }
+    p.desc {
+      color: var(--sub);
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+    .diagram-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 32px;
+      overflow-x: auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .mermaid {
+      display: flex;
+      justify-content: center;
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 6px;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(46, 160, 67, 0.15);
+      color: #3fb950;
+      border: 1px solid rgba(46, 160, 67, 0.4);
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📐 DispenSave — Diagramas Técnicos Oficiales para Informe</h1>
+    <p class="desc">Todos los diagramas requeridos por la rúbrica (Sección IV y V), renderizados en alta fidelidad con Mermaid.js. Puedes copiarlos o capturarlos directamente para tu documento Word.</p>
+
+    <!-- Diagrama 1: Arquitectura MVVM -->
+    <span class="badge">Sección 4.1</span>
+    <h2>1. Diagrama de Arquitectura de la Solución (MVVM + Clean Architecture)</h2>
+    <p class="desc">Flujo descendente unidireccional desacoplado: UI (Jetpack Compose) ➔ ViewModel (StateFlow) ➔ Repositorios ➔ Fuentes de Datos (Room SQLite & Retrofit REST).</p>
+    <div class="diagram-card">
+      <div class="mermaid">
+graph TD
+    subgraph Capa_UI ["1. Capa de Presentación (Jetpack Compose UI)"]
+        Nav["AppNavigation y ContenedorPrincipal<br/>Rutas y Menú Inferior NavigationBar"]
+        Pantry["PantryScreen<br/>Despensa y Semáforo"]
+        Dialog["AddProductDialog<br/>Validación Formulario"]
+        Detail["ProductDetailScreen<br/>Edición y ConfirmDelete"]
+        Shopping["ShoppingListScreen<br/>Compras y Traslado"]
+        Search["ProductSearchScreen<br/>Búsqueda API REST"]
+    end
+
+    subgraph Capa_VM ["2. Capa de Lógica de Presentación (ViewModel)"]
+        VM["PantryViewModel<br/>StateFlow y CoroutineScope (Dispatchers.IO)"]
+        State["Estados Reactivos<br/>allProducts / apiSearchResults / isSearching"]
+    end
+
+    subgraph Capa_Repo ["3. Capa de Datos (Repositorios)"]
+        RepoPantry["PantryRepository<br/>Fuente Única de Verdad"]
+        RepoRescue["RescueRepository<br/>Ofertas y Rescate"]
+    end
+
+    subgraph Capa_Sources ["4. Capa de Fuentes de Datos (Local y Remota)"]
+        RoomDB["AppDatabase y ProductDao<br/>Persistencia SQLite Local"]
+        Retrofit["RetrofitClient y FoodApiService<br/>OpenFoodFacts REST API"]
+    end
+
+    Nav --> Pantry
+    Nav --> Shopping
+    Nav --> Search
+    Pantry --> Dialog
+    Pantry --> Detail
+
+    Pantry -.->|"Eventos CRUD"| VM
+    Shopping -.->|"Trasladar a Despensa"| VM
+    Search -.->|"Buscar Online"| VM
+
+    VM --- State
+    VM -->|"Invoca Operaciones"| RepoPantry
+    VM -->|"Consulta Ofertas"| RepoRescue
+
+    RepoPantry -->|"Flow Reactivo / CRUD"| RoomDB
+    VM -->|"HTTP GET Asíncrono"| Retrofit
+      </div>
+    </div>
+
+    <!-- Diagrama 2: Modelo Entidad-Relación -->
+    <span class="badge">Sección 4.3</span>
+    <h2>2. Diagrama de Base de Datos — Modelo Entidad-Relación (MER)</h2>
+    <p class="desc">Entidades relacionales de DispenSave con llaves primarias, foráneas y cardinalidad (Offline-First en SQLite con Room).</p>
+    <div class="diagram-card">
+      <div class="mermaid">
+erDiagram
+    USER ||--o{ PRODUCT : "administra en despensa"
+    USER ||--o{ ORDER : "realiza reserva"
+    STORE ||--o{ RESCUE_OFFER : "publica ofertas"
+    RESCUE_OFFER ||--o{ ORDER : "es reservada en"
+
+    USER {
+        string id PK "Identificador único"
+        string email "Correo del usuario"
+        string name "Nombre completo"
+        string role "CLIENTE o COMERCIO"
+        string phone "Teléfono de contacto"
+    }
+
+    PRODUCT {
+        int id PK "Autoincremental SQLite"
+        string userId FK "ID del usuario propietario"
+        string name "Nombre del alimento"
+        string category "Lácteos, Frutas, Carnes, etc."
+        int expirationDate "Timestamp ms fecha caducidad"
+        int quantity "Existencias en stock"
+        string unit "Unidad: kg, L, uds"
+        string status "Disponible, Por Vencer, Vencido"
+    }
+
+    STORE {
+        string id PK "Identificador de tienda"
+        string businessName "Razón social"
+        string address "Dirección física"
+        string category "Supermercado, Panadería"
+    }
+
+    RESCUE_OFFER {
+        string id PK "Identificador de oferta"
+        string storeId FK "Comercio emisor"
+        string title "Título del paquete"
+        float originalPrice "Precio normal"
+        float discountPrice "Precio reducido"
+        int quantityAvailable "Stock disponible"
+    }
+
+    ORDER {
+        string id PK "Código de reserva"
+        string userId FK "Cliente rescatista"
+        string offerId FK "Oferta reservada"
+        int orderDate "Fecha de emisión"
+        string status "Pendiente, Recogido"
+        float totalPrice "Total a pagar"
+    }
+      </div>
+    </div>
+
+    <!-- Diagrama 3: Flujo de Navegación Wireflow -->
+    <span class="badge">Sección 4.4</span>
+    <h2>3. Diagrama de Flujo de Navegación (Wireflow / Navigation Graph)</h2>
+    <p class="desc">Grafo de navegación implementado en AppNavigation.kt con Jetpack Compose y Scaffold con NavigationBar.</p>
+    <div class="diagram-card">
+      <div class="mermaid">
+graph LR
+    Onboard["OnboardingScreen<br/>Bienvenida"] --> Login["LoginScreen<br/>Inicio de Sesión"]
+    Onboard --> Register["RegisterScreen<br/>Registro con Rol"]
+    Login --> Main["ContenedorPrincipal<br/>Scaffold + NavigationBar"]
+    Register --> Main
+
+    subgraph Modulos_Principales ["Módulos de la Barra Inferior"]
+        PantryTab["Despensa (pantry)<br/>PantryScreen"]
+        ShopTab["Compras (shopping)<br/>ShoppingListScreen"]
+        ApiTab["Catálogo API (api_search)<br/>ProductSearchScreen"]
+        ExploreTab["Explorar (explore)<br/>ExploreScreen"]
+        ImpactTab["Impacto CO2 (impact)<br/>ImpactScreen"]
+    end
+
+    Main --> PantryTab
+    Main --> ShopTab
+    Main --> ApiTab
+    Main --> ExploreTab
+    Main --> ImpactTab
+
+    PantryTab --> AddDlg["AddProductDialog<br/>Modal Registro"]
+    PantryTab --> DetailSc["ProductDetailScreen<br/>Edición y Borrado"]
+    ShopTab --> MovePantry["Traslado Masivo<br/>a Room SQLite"]
+    ApiTab --> ImportPantry["Añadir Producto<br/>a Despensa Room"]
+      </div>
+    </div>
+
+    <!-- Diagrama 4: Secuencia de Información UDF -->
+    <span class="badge">Sección 4.1.3</span>
+    <h2>4. Diagrama de Secuencia: Flujo Unidireccional de Información (UDF)</h2>
+    <p class="desc">Flujo de interacción entre la interfaz de usuario, el ViewModel, el Repositorio y la Base de Datos SQLite.</p>
+    <div class="diagram-card">
+      <div class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Usuario
+    participant UI as Jetpack Compose UI<br/>(PantryScreen)
+    participant VM as PantryViewModel<br/>(StateFlow)
+    participant Repo as PantryRepository
+    participant Room as Room SQLite DB<br/>(ProductDao)
+
+    Usuario->>UI: Clic en "Guardar Alimento" (AddProductDialog)
+    UI->>VM: addProduct(name, category, date, qty, unit)
+    Note over VM: viewModelScope.launch(Dispatchers.IO)
+    VM->>Repo: addProduct(Product)
+    Repo->>Room: insertProduct(ProductEntity)
+    Room-->>Repo: Emite nuevo Flow de productos
+    Repo-->>VM: Transforma Entity a Product de Dominio
+    VM-->>UI: Actualiza allProducts StateFlow
+    Note over UI: Smart Recomposition automática
+    UI-->>Usuario: Muestra producto en lista con semáforo
+      </div>
+    </div>
+
+    <!-- Diagrama 5: Flujo de Trabajo Git Flow y Colaboración -->
+    <span class="badge">Sección 6.2</span>
+    <h2>5. Modelo Git Flow y Trabajo Colaborativo (4 Integrantes)</h2>
+    <p class="desc">Estructura real de ramas y Pull Requests fusionados en el repositorio de GitHub.</p>
+    <div class="diagram-card">
+      <div class="mermaid">
+gitGraph
+    commit id: "0b030de: Core MVVM (Maykel)"
+    commit id: "df8653b: Catálogo Base (Maykel)"
+    branch feature/shopping-list-alerts
+    checkout feature/shopping-list-alerts
+    commit id: "99474ee: Semáforo UI (Andy)"
+    commit id: "d5a0f4b: Lista Compras (Andy)"
+    checkout main
+    merge feature/shopping-list-alerts id: "PR #1 Merged"
+    branch feature/retrofit-api-consumption
+    checkout feature/retrofit-api-consumption
+    commit id: "eb54a90: Retrofit Dep (Luis)"
+    commit id: "302318f: ApiService (Luis)"
+    commit id: "5b00151: SearchScreen (Luis)"
+    checkout main
+    merge feature/retrofit-api-consumption id: "PR #2 Merged"
+    branch feature/room-crud-pantry
+    checkout feature/room-crud-pantry
+    commit id: "2c6f142: Room Compiler (Rubén)"
+    commit id: "de90d06: Room CRUD (Rubén)"
+    commit id: "8f25430: Docs Room (Rubén)"
+    checkout main
+    merge feature/room-crud-pantry id: "PR #3 Merged"
+    commit id: "5a9a78a: Informe Final Completo"
+      </div>
+    </div>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'default',
+      securityLevel: 'loose',
+      flowchart: {
+        useMaxWidth: true,
+        htmlLabels: true,
+        curve: 'basis'
+      }
+    });
+  </script>
+</body>
+</html>
