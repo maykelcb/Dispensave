@@ -1,78 +1,65 @@
 package com.example.dispensave.data.repository
 
+import com.example.dispensave.data.local.ProductDao
+import com.example.dispensave.data.local.ProductEntity
 import com.example.dispensave.domain.model.Product
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 
-class PantryRepository {
+/**
+ * Repositorio de Despensa — Parte 3 (Rubén)
+ * Conecta la capa de presentación con la base de datos local SQLite (Room).
+ * Reemplaza el almacenamiento en memoria por persistencia real en el dispositivo.
+ * Implementa las operaciones CRUD: Create, Read, Update, Delete.
+ */
+class PantryRepository(private val productDao: ProductDao) {
 
-    private val _products = MutableStateFlow(
-        listOf(
-            Product(
-                id = 1,
-                name = "Pechuga de Pollo San Fernando",
-                category = "Carnes",
-                expirationDate = System.currentTimeMillis() + (1000 * 60 * 60 * 4), // Vence hoy
-                quantity = 1,
-                unit = "kg"
-            ),
-            Product(
-                id = 2,
-                name = "Yogurt Danlac Vainilla",
-                category = "Lácteos",
-                expirationDate = System.currentTimeMillis() + (1000L * 60 * 60 * 24 * 2), // En 2 días
-                quantity = 1,
-                unit = "botella"
-            ),
-            Product(
-                id = 3,
-                name = "Arroz Costeño Familiar",
-                category = "Abarrotes",
-                expirationDate = System.currentTimeMillis() + (1000L * 60 * 60 * 24 * 15), // En 15 días
-                quantity = 2,
-                unit = "kg"
-            ),
-            Product(
-                id = 4,
-                name = "Plátanos de Seda",
-                category = "Frescos",
-                expirationDate = System.currentTimeMillis() + (1000L * 60 * 60 * 24 * 4), // En 4 días
-                quantity = 6,
-                unit = "unidades"
-            ),
-            Product(
-                id = 5,
-                name = "Huevos de corral San Jorge",
-                category = "Abarrotes",
-                expirationDate = System.currentTimeMillis() + (1000L * 60 * 60 * 24 * 8), // En 8 días
-                quantity = 12,
-                unit = "unidades"
-            )
-        )
-    )
-    val allProducts: Flow<List<Product>> = _products.asStateFlow()
+    // Flow reactivo: emite la lista de productos ordenados por fecha de caducidad
+    // Cada vez que la BD cambia, las pantallas se actualizan automáticamente
+    val allProducts: Flow<List<Product>> = productDao
+        .getAllProductsSortedByExpiration()
+        .map { entities -> entities.map { it.toProduct() } }
 
+    /**
+     * Inserta un nuevo producto en la base de datos Room (SQLite).
+     * Retorna el ID generado automáticamente por Room.
+     */
     suspend fun addProduct(product: Product): Long {
-        val current = _products.value.toMutableList()
-        val newId = (current.maxOfOrNull { it.id } ?: 0) + 1
-        current.add(0, product.copy(id = newId))
-        _products.value = current
-        return newId.toLong()
+        return productDao.insertProduct(product.toEntity())
     }
 
+    /**
+     * Actualiza un producto existente en la base de datos.
+     * Usa el ID del producto para identificar el registro a modificar.
+     */
     suspend fun updateProduct(product: Product) {
-        val current = _products.value.toMutableList()
-        val index = current.indexOfFirst { it.id == product.id }
-        if (index != -1) {
-            current[index] = product
-            _products.value = current
-        }
+        productDao.updateProduct(product.toEntity())
     }
 
+    /**
+     * Elimina un producto de la base de datos Room de forma permanente.
+     */
     suspend fun deleteProduct(product: Product) {
-        val current = _products.value.toMutableList()
-        current.removeAll { it.id == product.id }
-        _products.value = current
+        productDao.deleteProduct(product.toEntity())
     }
+
+    // --- Funciones de conversión entre capas ---
+
+    private fun ProductEntity.toProduct(): Product = Product(
+        id = this.id,
+        name = this.name,
+        category = this.category,
+        expirationDate = this.expirationDate,
+        quantity = this.quantity,
+        unit = this.unit
+    )
+
+    private fun Product.toEntity(): ProductEntity = ProductEntity(
+        id = this.id,
+        name = this.name,
+        category = this.category,
+        expirationDate = this.expirationDate,
+        quantity = this.quantity,
+        unit = this.unit
+    )
 }
