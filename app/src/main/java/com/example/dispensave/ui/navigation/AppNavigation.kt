@@ -47,7 +47,7 @@ fun AppNavigation(viewModel: PantryViewModel) {
     val navController = rememberNavController()
     var prefilledEmail by remember { mutableStateOf("") }
 
-    NavHost(navController = navController, startDestination = "onboarding") {
+    NavHost(navController = navController, startDestination = "main") {
         composable("onboarding") {
             OnboardingScreen(
                 onStartClick = { navController.navigate("register") { launchSingleTop = true } },
