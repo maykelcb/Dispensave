@@ -62,6 +62,12 @@ dependencies {
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
 
+    // Retrofit 2, Gson y OkHttp (Consumo de API REST Externa)
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
     //prueba
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
