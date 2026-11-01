@@ -1,0 +1,129 @@
+<mxfile host="app.diagrams.net" modified="2026-11-01T22:20:00.000Z" agent="Mozilla/5.0" version="24.0.0" type="device">
+  <diagram id="dispensave-mvvm-diagram" name="Arquitectura MVVM DispenSave">
+    <mxGraphModel dx="1400" dy="1400" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ENCABEZADO PRINCIPAL -->
+        <mxCell id="header" value="&lt;b style=&quot;font-size: 18px;&quot;&gt;ARQUITECTURA MVVM Y FLUJO UNIDIRECCIONAL DE DATOS (UDF)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size: 12px; color: #555;&quot;&gt;Plataforma Móvil DispenSave • Android Studio • Jetpack Compose • Kotlin Coroutines • Room SQLite • Retrofit 2&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8F9FA;strokeColor=#D0D7DE;strokeWidth=1.5;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="30" width="980" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ========================================== -->
+        <!-- 1. CAPA DE PRESENTACIÓN / VISTA (UI)       -->
+        <!-- ========================================== -->
+        <mxCell id="layer_ui" value="&lt;b style=&quot;font-size: 13px; color: #0969DA;&quot;&gt;1. CAPA DE PRESENTACIÓN / VISTA (Jetpack Compose UI Declarativa &amp;amp; State Hoisting)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=15;spacingTop=10;fillColor=#F0F7FF;strokeColor=#0969DA;strokeWidth=2;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="110" width="980" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- Tarjetas UI -->
+        <mxCell id="card_pantry" value="&lt;b style=&quot;color: #0969DA;&quot;&gt;PantryScreen.kt&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;• Despensa reactiva&lt;br&gt;• Semáforo FEFO&lt;br&gt;• LazyColumn&lt;br&gt;&lt;i&gt;Observa StateFlow&lt;/i&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0969DA;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="70" y="145" width="220" height="95" as="geometry" />
+        </mxCell>
+
+        <mxCell id="card_dialog" value="&lt;b style=&quot;color: #0969DA;&quot;&gt;AddProductDialog.kt&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;• Formulario asistido&lt;br&gt;• DatePicker modal&lt;br&gt;• ValidationUtils&lt;br&gt;&lt;i&gt;Evento onConfirm&lt;/i&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0969DA;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="310" y="145" width="220" height="95" as="geometry" />
+        </mxCell>
+
+        <mxCell id="card_search" value="&lt;b style=&quot;color: #0969DA;&quot;&gt;ProductSearchScreen.kt&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;• Catálogo online REST&lt;br&gt;• Spinner de carga&lt;br&gt;• Botón &quot;Añadir a DB&quot;&lt;br&gt;&lt;i&gt;ProductSearchUiState&lt;/i&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0969DA;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="550" y="145" width="220" height="95" as="geometry" />
+        </mxCell>
+
+        <mxCell id="card_shopping" value="&lt;b style=&quot;color: #0969DA;&quot;&gt;ShoppingListScreen.kt&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;• Checkboxes interactivos&lt;br&gt;• Traslado automático&lt;br&gt;• Sincronización Room&lt;br&gt;&lt;i&gt;Gestión de Compras&lt;/i&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0969DA;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="790" y="145" width="220" height="95" as="geometry" />
+        </mxCell>
+
+        <!-- CONECTORES UDF (UI <-> VIEWMODEL) -->
+        <mxCell id="flow_events_1" value="&lt;b style=&quot;color: #0969DA; font-size: 11px;&quot;&gt;▲ Eventos de Usuario (Clicks, Inputs, Acciones CRUD)&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;strokeColor=#0969DA;strokeWidth=2;" edge="1" parent="1" source="layer_vm" target="layer_ui">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="flow_state_1" value="&lt;b style=&quot;color: #1A7F37; font-size: 11px;&quot;&gt;▼ Emisión de Estado Reactivo (StateFlow / Recomposición Smart)&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;strokeColor=#1A7F37;strokeWidth=2;" edge="1" parent="1" source="layer_ui" target="layer_vm">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ========================================== -->
+        <!-- 2. CAPA DE VIEWMODEL                       -->
+        <!-- ========================================== -->
+        <mxCell id="layer_vm" value="&lt;b style=&quot;font-size: 13px; color: #BF4B00;&quot;&gt;2. CAPA DE VIEWMODEL / LÓGICA DE PRESENTACIÓN (androidx.lifecycle.ViewModel)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=15;spacingTop=10;fillColor=#FFF9F2;strokeColor=#BF4B00;strokeWidth=2;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="310" width="980" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- Tarjetas ViewModel -->
+        <mxCell id="card_vm" value="&lt;b style=&quot;color: #BF4B00;&quot;&gt;PantryViewModel.kt&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;• Sobrevive a giros de pantalla&lt;br&gt;• viewModelScope (Dispatchers.IO)&lt;br&gt;• Métodos addProduct(), deleteProduct()&lt;br&gt;&lt;i&gt;Orquestador central de estado&lt;/i&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#BF4B00;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="70" y="345" width="300" height="95" as="geometry" />
+        </mxCell>
+
+        <mxCell id="card_stateflow" value="&lt;b style=&quot;color: #BF4B00;&quot;&gt;Estados Reactivos (StateFlow)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;• val products: StateFlow&amp;lt;List&amp;lt;Product&amp;gt;&amp;gt;&lt;br&gt;• val surplusBags: StateFlow&amp;lt;List&amp;lt;...&amp;gt;&amp;gt;&lt;br&gt;• Encapsulamiento con MutableStateFlow&lt;br&gt;&lt;i&gt;Inmutabilidad hacia la UI&lt;/i&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#BF4B00;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="390" y="345" width="300" height="95" as="geometry" />
+        </mxCell>
+
+        <mxCell id="card_uistate" value="&lt;b style=&quot;color: #BF4B00;&quot;&gt;ProductSearchUiState&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;• Idle (estado inicial de espera)&lt;br&gt;• Loading (petición de red activa)&lt;br&gt;• Success(productos) | Error(mensaje)&lt;br&gt;&lt;i&gt;Sealed Class reactiva&lt;/i&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#BF4B00;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="710" y="345" width="300" height="95" as="geometry" />
+        </mxCell>
+
+        <!-- CONECTORES (VIEWMODEL <-> REPOSITORIOS) -->
+        <mxCell id="flow_repo_down" value="&lt;b style=&quot;color: #BF4B00; font-size: 11px;&quot;&gt;▼ Invoca Operaciones Suspendidas (insert, update, delete, search)&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;strokeColor=#BF4B00;strokeWidth=2;" edge="1" parent="1" source="layer_vm" target="layer_repo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="flow_repo_up" value="&lt;b style=&quot;color: #1A7F37; font-size: 11px;&quot;&gt;▲ Retorna Streams de Dominio (Flow&amp;lt;List&amp;lt;Product&amp;gt;&amp;gt; &amp;amp; Modelos limpios)&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;strokeColor=#1A7F37;strokeWidth=2;" edge="1" parent="1" source="layer_repo" target="layer_vm">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ========================================== -->
+        <!-- 3. CAPA DE REPOSITORIOS                    -->
+        <!-- ========================================== -->
+        <mxCell id="layer_repo" value="&lt;b style=&quot;font-size: 13px; color: #1A7F37;&quot;&gt;3. CAPA DE DATOS / REPOSITORIOS (Fuente Única de Verdad - Single Source of Truth)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=15;spacingTop=10;fillColor=#F2FAF5;strokeColor=#1A7F37;strokeWidth=2;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="510" width="980" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- Tarjetas Repositorios -->
+        <mxCell id="card_pantry_repo" value="&lt;b style=&quot;color: #1A7F37;&quot;&gt;PantryRepository.kt&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;• Orquesta la persistencia local Room&lt;br&gt;• Mapeo: ProductEntity ➔ Product (Domain)&lt;br&gt;• Expone Flow reactivo al ViewModel&lt;br&gt;&lt;i&gt;Desacopla SQLite del negocio&lt;/i&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1A7F37;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="70" y="545" width="300" height="95" as="geometry" />
+        </mxCell>
+
+        <mxCell id="card_rescue_repo" value="&lt;b style=&quot;color: #1A7F37;&quot;&gt;RescueRepository.kt&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;• Packs sorpresa de excedentes&lt;br&gt;• Horarios de recogida de alimentos&lt;br&gt;• Gestión de órdenes de reserva&lt;br&gt;&lt;i&gt;Marketplace de Alimentos&lt;/i&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1A7F37;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="390" y="545" width="300" height="95" as="geometry" />
+        </mxCell>
+
+        <mxCell id="card_user_repo" value="&lt;b style=&quot;color: #1A7F37;&quot;&gt;UserRepository.kt&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;• Autenticación y credenciales de usuario&lt;br&gt;• Soporte multi-rol (CLIENTE vs COMERCIO)&lt;br&gt;• Gestión de sesión y preferencias locales&lt;br&gt;&lt;i&gt;Control de acceso&lt;/i&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1A7F37;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="710" y="545" width="300" height="95" as="geometry" />
+        </mxCell>
+
+        <!-- CONECTORES (REPOSITORIOS <-> DATA SOURCES) -->
+        <mxCell id="flow_ds_left" value="&lt;b style=&quot;color: #6E3FBE; font-size: 11px;&quot;&gt;▼ Inserción / Lectura SQL (@Dao)&lt;br&gt;▲ Notificación Flow reactiva&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;strokeColor=#6E3FBE;strokeWidth=2;" edge="1" parent="1" source="layer_repo" target="layer_sources">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="flow_ds_right" value="&lt;b style=&quot;color: #00796B; font-size: 11px;&quot;&gt;▼ Llamada HTTP GET asíncrona&lt;br&gt;▲ Deserialización Gson DTO&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;strokeColor=#00796B;strokeWidth=2;" edge="1" parent="1" source="layer_repo" target="layer_sources">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ========================================== -->
+        <!-- 4. CAPA DE FUENTES DE DATOS                -->
+        <!-- ========================================== -->
+        <mxCell id="layer_sources" value="&lt;b style=&quot;font-size: 13px; color: #6E3FBE;&quot;&gt;4. CAPA DE FUENTES DE DATOS (Data Sources: Persistencia Local SQLite &amp;amp; Consumo Remoto REST)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=15;spacingTop=10;fillColor=#FAF8FE;strokeColor=#6E3FBE;strokeWidth=2;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="710" width="980" height="170" as="geometry" />
+        </mxCell>
+
+        <!-- Data Source Local -->
+        <mxCell id="card_local_ds" value="&lt;b style=&quot;color: #6E3FBE;&quot;&gt;LOCAL DATA SOURCE (Room Database / SQLite nativo)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 11px; text-align: left;&quot;&gt;• &lt;b&gt;AppDatabase.kt:&lt;/b&gt; Instancia Singleton con fallback destructivo seguro.&lt;br&gt;• &lt;b&gt;ProductDao.kt:&lt;/b&gt; Consultas @Query, @Insert, @Update, @Delete.&lt;br&gt;• &lt;b&gt;ProductEntity.kt:&lt;/b&gt; Tabla relacional &#39;products&#39; con timestamp numérico.&lt;br&gt;• &lt;i&gt;Garantiza persistencia permanente Offline-First y verificación en compilación.&lt;/i&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6E3FBE;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="70" y="745" width="455" height="115" as="geometry" />
+        </mxCell>
+
+        <!-- Data Source Remoto -->
+        <mxCell id="card_remote_ds" value="&lt;b style=&quot;color: #00796B;&quot;&gt;REMOTE DATA SOURCE (Retrofit 2 REST Client + OkHttp)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 11px; text-align: left;&quot;&gt;• &lt;b&gt;RetrofitClient.kt:&lt;/b&gt; Singleton con OkHttp (timeouts 15s y Logging).&lt;br&gt;• &lt;b&gt;FoodApiService.kt:&lt;/b&gt; Endpoint @GET &quot;cgi/search.pl&quot; de OpenFoodFacts.&lt;br&gt;• &lt;b&gt;OpenFoodFactsDto.kt:&lt;/b&gt; Deserializador JSON en clases de datos tipadas.&lt;br&gt;• &lt;i&gt;Consultas seguras mediante HTTPS / TLS 1.3 con soporte de corrutinas.&lt;/i&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#00796B;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="555" y="745" width="455" height="115" as="geometry" />
+        </mxCell>
+
+        <!-- PIE DE DIAGRAMA / LEYENDA -->
+        <mxCell id="footer_legend" value="&lt;font style=&quot;font-size: 11px; color: #555;&quot;&gt;&lt;b&gt;Leyenda de Colores:&lt;/b&gt;  🔵 Azul = Vista (Jetpack Compose)  |  🟠 Naranja = ViewModel  |  🟢 Verde = Repositorio (Dominio)  |  🟣 Púrpura = Room SQLite  |  🟢 Teal = Retrofit REST API&lt;br&gt;&lt;b&gt;DispenSave (Cátedra de Desarrollo de Aplicaciones Móviles)&lt;/b&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8F9FA;strokeColor=#D0D7DE;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="900" width="980" height="45" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
