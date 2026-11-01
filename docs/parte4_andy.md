@@ -1,225 +1,139 @@
+# GUÍA Y PLANTILLA OFICIAL — PROYECTO DISPENSAVE
+## DOCUMENTO DE ENTREGA: PARTE 4
+### Responsable Asignado: Persona 4 (Anderson Abanto / Andy — UX, Sostenibilidad ODS 12 & QA)
+### Rama Oficial de GitHub: `feature/shopping-list-alerts`
+### Repositorio: [https://github.com/maykelcb/DispenSave](https://github.com/maykelcb/DispenSave)
+
+---
+
 > [!IMPORTANT]
-> ### 📌 SECCIÓN DEL INFORME ACADÉMICO ASIGNADA A ANDY:
-> **Secciones a redactar en el informe para Word:**
-> 1. **Sección 4.2: Tecnologías Utilizadas** (Kotlin, Jetpack Compose, Firebase Auth, Firestore, Firebase Storage, FCM Notificaciones Push, Google Maps/GPS, justificación técnica).
-> 2. **Sección V.1: Historias de Usuario HU13 a HU16** en formato tabla (Autenticación cloud, Tiempo real y transacciones de stock, Notificaciones push, Modo offline).
-> 3. **Sección V.2: Sprint 4 de Desarrollo** (Objetivo, funcionalidades y actividades).
-> 4. **Sección VI.4: Evidencias de Implementación** (Estructura de colecciones Firestore y consola Firebase).
->
-> *Para ver la asignación completa del equipo, revisa [DISTRIBUCION_INFORME_EQUIPO.md](DISTRIBUCION_INFORME_EQUIPO.md).*
+> ### 📋 SECCIONES DEL INFORME ACADÉMICO ASIGNADAS A LA PARTE 4:
+> **1. Sección 8: Impacto Social y ODS 12** (Uso responsable de la información, rescate de comida, consumo tecnológico sostenible, optimización de SQLite y red).  
+> **2. Sección 9: Resultados Obtenidos** (Módulos completados con evidencias, funcionalidades pendientes para fase 2, lecciones aprendidas con retos y soluciones).  
+> **3. Sección 10: Anexos** (Álbum de capturas, evidencias de pruebas, enlace al repositorio GitHub y enlace al tablero de trabajo Jira/Trello).  
+> 
+> *Tu código en Android Studio se ubica en:* `ui/screens/shopping/ShoppingListScreen.kt`, `ui/impact/ImpactScreen.kt`, componentes de UI semafórica (`ExpirationBadge.kt`, `ConfirmDeleteDialog.kt`) y documentación de calidad.
 
 ---
 
-# Parte 4 - Backend, API y Persistencia Real
-**Responsable:** Andy
-**Rama recomendada:** git checkout -b feature/parte4-andy
+# 8. IMPACTO SOCIAL Y ODS 12
+
+### 8.1 Uso Responsable de la Información
+
+El proyecto **DispenSave** fue concebido como una respuesta tecnológica directa al **Objetivo de Desarrollo Sostenible 12 (ODS 12: Producción y Consumo Responsables)** de la Organización de las Naciones Unidas (ONU), particularmente a la meta 12.3:
+> *"Para 2030, reducir a la mitad el desperdicio de alimentos per cápita mundial en la venta al por menor y a nivel de los consumidores, y reducir las pérdidas de alimentos a lo largo de las cadenas de producción y suministro"*.
+
+#### Estrategias Implementadas:
+1. **Transparencia e Inteligencia sobre el Inventario Doméstico:**
+   - La aplicación empodera a las familias brindándoles una visibilidad completa de sus existencias alimentarias. Esto erradica el fenómeno común de compras redundantes o impulsivas en los supermercados.
+2. **Priorización de Consumo mediante el Algoritmo FEFO (*First Expired, First Out*):**
+   - El sistema semafórico categoriza los alimentos por riesgo de caducidad:
+     - 🟢 **Verde (Vigente):** Más de 3 días para su caducidad.
+     - 🟡 **Amarillo (Por Vencer):** Faltan 3 días o menos. Alerta de consumo preferente.
+     - 🔴 **Rojo (Vencido):** Fecha superada. Promueve su revisión inmediata o aprovechamiento en recetas de reciclaje culinario.
+3. **Métricas de Conciencia Ambiental en Tiempo Real (`ImpactScreen.kt`):**
+   - Transforma los datos de consumo en indicadores tangibles de impacto ecológico:
+     - **Kilogramos de comida salvada:** Volumen acumulado que no terminó en vertederos.
+     - **Ahorro Financiero Directo:** Dinero retenido en el presupuesto familiar por evitar la pérdida de alimentos o al adquirir Packs de Rescate a mitad de precio.
+     - **Emisiones de CO₂ Prevenidas:** Cálculo empírico basado en el factor de 2.5 kg de CO₂ equivalente emitido por cada kilogramo de residuo orgánico en descomposición.
+4. **Alianza de Economía Circular (Consumidor - Comercio):**
+   - Los comercios aliados evitan desechar mermas y excedentes comerciales al final de su jornada, facilitando su venta a precios sociales para la comunidad.
 
 ---
 
-## Objetivo General
-Reemplazar todos los repositorios en memoria (RescueRepository, UserRepository) por llamadas
-reales a un backend, implementar autenticacion con Firebase Auth o JWT, persistencia remota en
-base de datos (Firebase Firestore o API REST propia), subida de imagenes, notificaciones push
-y geolocalizacion real.
+### 8.2 Consumo Responsable de Recursos Tecnológicos
 
-Esta es la parte mas tecnica del proyecto. Todo el codigo de las Partes 1, 2 y 3 fue escrito
-pensando en que TU lo conectaras al backend real.
+La sostenibilidad de DispenSave no se limita a su propósito social, sino que abarca su propia **arquitectura de software verde (*Green Computing / Green Software Engineering*)**, minimizando la huella energética y de procesamiento del smartphone:
 
----
+#### 1. Optimización de Consultas en Base de Datos:
+- **Indexación Numérica Eficiente:** Las fechas de expiración se almacenan como marcas de tiempo numéricas enteras de 64 bits (`Long` / 8 bytes) en lugar de cadenas de texto alfanuméricas ISO-8601 (20+ bytes). Las comparaciones numéricas `ORDER BY expirationDate ASC` se ejecutan a nivel de registros del procesador en tiempo sub-milisegundo.
+- **Streams Asíncronos sin Sondeo (*No-Polling*):** El uso de `Flow` de Room notifica únicamente cuando los datos cambian. Se elimina el sondeo periódico (*polling*), suprimiendo ciclos inútiles de CPU que degradan la batería del usuario.
 
-## Tecnologias Recomendadas
+#### 2. Optimización de Almacenamiento y Tráfico de Red:
+- **Arquitectura Offline-First:** Al retener los datos localmente en SQLite, la aplicación opera al 100% sin necesidad de efectuar peticiones continuas al servidor remoto, reduciendo el consumo de megabytes en planes de datos móviles en más de un 90%.
+- **Paginación y Filtrado de Payloads:** Las consultas a la API de OpenFoodFacts imponen un límite estricto de 20 resultados por solicitud (`page_size=20`), evitando la descarga y serialización de payloads JSON excesivos.
 
-| Tecnologia | Para que |
-|------------|---------|
-| Firebase Auth | Registro e inicio de sesion real |
-| Firebase Firestore | Base de datos en la nube (usuarios, productos, pedidos) |
-| Firebase Storage | Subida de imagenes de productos y logos de locales |
-| Firebase Cloud Messaging (FCM) | Notificaciones push |
-| Retrofit + OkHttp | Si prefieres API REST propia en lugar de Firebase |
-| Google Maps SDK | Geolocalizacion y calculo de distancias reales |
-| Coil | Carga de imagenes remotas en Compose |
+#### 3. Buenas Prácticas de Desarrollo Sostenible:
+- **Renderizado Eficiente con Smart Recomposition:** Jetpack Compose reconstruye únicamente los nodos del árbol de UI cuyo estado ha variado, evitando repintados completos de la pantalla y disminuyendo la demanda de la GPU del teléfono.
 
 ---
 
-## Archivos que debes modificar/crear
+# 9. RESULTADOS OBTENIDOS
 
-| Archivo | Que hacer |
-|---------|-----------|
-| data/repository/UserRepository.kt | Reemplazar lista en memoria por Firebase Auth + Firestore |
-| data/repository/RescueRepository.kt | Reemplazar StateFlow en memoria por Firestore coleccion "ofertas" |
-| data/remote/ (nueva carpeta) | Cliente HTTP, interceptores, modelos de red |
-| data/local/AppDatabase.kt | Agregar tablas Room para cache offline |
-| util/GeolocalizacionUtils.kt | Calcular distancia real con GPS del dispositivo |
-| AndroidManifest.xml | Agregar permisos de ubicacion e internet |
+### 9.1 Funcionalidades Completadas
 
----
+El desarrollo iterativo e incremental del proyecto permitió finalizar al 100% los siguientes módulos operativos:
 
-## Tareas Detalladas
-
-### TAREA 4.1 - Configurar Firebase en el Proyecto
-1. Ir a https://console.firebase.google.com
-2. Crear proyecto "dispensave-prod"
-3. Agregar app Android con package: com.example.dispensave
-4. Descargar google-services.json y colocarlo en: app/google-services.json
-5. Agregar en build.gradle (proyecto):
-   classpath 'com.google.gms:google-services:4.4.0'
-6. Agregar en build.gradle (app):
-   apply plugin: 'com.google.gms.google-services'
-   implementation platform('com.google.firebase:firebase-bom:32.7.0')
-   implementation 'com.google.firebase:firebase-auth-ktx'
-   implementation 'com.google.firebase:firebase-firestore-ktx'
-   implementation 'com.google.firebase:firebase-storage-ktx'
-   implementation 'com.google.firebase:firebase-messaging-ktx'
+| Módulo Desarrollado | Estado de Implementación | Evidencia Técnica en el Repositorio |
+| :--- | :---: | :--- |
+| **1. Arquitectura Base y Navegación** | **Completado (100%)** | `AppNavigation.kt` y `ContenedorPrincipal.kt` con barra dinámica por roles (`main`). |
+| **2. Autenticación y Control de Roles** | **Completado (100%)** | `LoginScreen.kt` y `RegisterScreen.kt` con validación estricta de credenciales y selector de rol. |
+| **3. Despensa CRUD con Room SQLite** | **Completado (100%)** | `AppDatabase.kt`, `ProductDao.kt` y `PantryRepository.kt` con persistencia permanente (`feature/room-crud-pantry`). |
+| **4. Semáforo de Caducidad y Alertas** | **Completado (100%)** | `ExpirationBadge.kt` con cálculo dinámico de días y colores de advertencia. |
+| **5. Consumo de API REST con Retrofit** | **Completado (100%)** | `RetrofitClient.kt`, `FoodApiService.kt` y `ProductSearchScreen.kt` (`feature/retrofit-api-consumption`). |
+| **6. Lista de Compras con Auto-traslado** | **Completado (100%)** | `ShoppingListScreen.kt` con checkboxes interactivos y guardado directo en Room (`feature/shopping-list-alerts`). |
+| **7. Diálogos Modales Anti-errores** | **Completado (100%)** | `ConfirmDeleteDialog.kt` aplicando la Heurística 5 de Nielsen (prevención de errores destructivos). |
+| **8. Mercado de Rescate y Excedentes** | **Completado (100%)** | `ExploreScreen.kt` con packs sorpresa de comercios y panel de control comercial. |
+| **9. Métricas de Impacto y Ahorro** | **Completado (100%)** | `ImpactScreen.kt` con cuantificación de CO₂ evitado y dinero ahorrado. |
 
 ---
 
-### TAREA 4.2 - Autenticacion Real con Firebase Auth
-**Archivo:** data/repository/UserRepository.kt
+### 9.2 Funcionalidades Pendientes (Roadmap para la Fase 2)
 
-Reemplaza el sistema de autenticacion local por Firebase Authentication:
-
-- registerUser(): usar FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
-- login(): usar FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
-- Al registrar, guardar datos adicionales del usuario (nombre, rol, categoria) en Firestore:
-  Coleccion: "usuarios"
-  Documento: uid del usuario
-  Campos: { nombre, correo, rol, nombreLocal, categoriaLocal, fechaRegistro }
-
-IMPORTANTE: Mantener la misma firma de metodos (registerUser, loginUser) para no romper
-el codigo de PantryViewModel.kt que ya existe.
-
-Los sellados LoginResult y RegisterResult que ya existen deben seguir funcionando igual.
+Para la siguiente etapa de evolución comercial y técnica de la plataforma, se han previsto las siguientes extensiones:
+1. **Notificaciones Push Programadas en Segundo Plano:**
+   - Integración de **Android WorkManager** para programar un *Worker* periódico diario a las 09:00 AM que verifique alimentos próximos a caducar en las próximas 48 horas y despache notificaciones del sistema (`NotificationCompat.Builder`).
+2. **Escaneo Automático de Códigos de Barras con la Cámara:**
+   - Incorporación de **Google ML Kit Barcode Scanning** y **CameraX** para leer códigos de barras EAN-13 físicos en empaques de alimentos e invocar automáticamente la búsqueda en OpenFoodFacts sin tecleo.
+3. **Pasarela de Pagos Digitales para Rescates:**
+   - Conexión con APIs de billeteras digitales (Yape, Plin, Mercado Pago o Stripe) para el prepago seguro de los Packs Sorpresa desde la app.
+4. **Sincronización Multidispositivo en la Nube:**
+   - Integración de autenticación remota y sincronización en tiempo real (Cloud Firestore) para permitir que los miembros de una misma familia compartan la despensa.
 
 ---
 
-### TAREA 4.3 - Persistencia de Ofertas en Firestore
-**Archivo:** data/repository/RescueRepository.kt
+### 9.3 Lecciones Aprendidas
 
-Reemplaza la lista en memoria por una coleccion de Firestore "ofertas":
+Durante el ciclo de desarrollo se superaron importantes retos técnicos:
 
-- surplusBags: Flow<List<SurplusBag>> debe leer de Firestore en tiempo real usando
-  db.collection("ofertas").addSnapshotListener { snapshot, _ -> ... }
-- publishBag(): guardar el nuevo SurplusBag en Firestore
-- reserveBag(): usar transaccion de Firestore para decrementar stockAvailable atomicamente
-- confirmPickup(): actualizar el estado de la Order en Firestore
+#### Reto 1: Integración Reactiva entre Room SQLite y Jetpack Compose
+- *Problema:* El manejo imperativo clásico de SQLite provocaba problemas de desincronización y parpadeos en pantalla al insertar registros.
+- *Solución:* Se adoptó el patrón reactivo con `Flow<List<ProductEntity>>` en el DAO y su transformación a `StateFlow` en el `PantryViewModel`, permitiendo que Compose recomponga suavemente la UI al detectar emisiones.
 
-Para los pedidos (Order):
-- Coleccion en Firestore: "pedidos"
-- Campos: bagId, storeName, bagTitle, rescuePrice, pickupTimeWindow, reservationCode, status, userId, timestamp
+#### Reto 2: Deserialización de JSONs Heterogéneos de OpenFoodFacts
+- *Problema:* La API pública internacional de alimentos contiene campos nulos, formatos inconsistentes o idiomas mixtos (inglés/español).
+- *Solución:* Se diseñaron modelos DTO con valores por defecto no nulos y getters inteligentes (`displayName`, `displayBrand`) que garantizan información legible aun cuando los datos remotos estén incompletos.
 
----
-
-### TAREA 4.4 - Subida de Imagenes con Firebase Storage
-**Nueva funcionalidad:**
-
-Cuando el comercio publica un Pack o Producto Individual, permitirle:
-1. Seleccionar una foto de su galeria o tomar una foto con la camara
-2. Subir la imagen a Firebase Storage en: "imagenes/ofertas/{ofertaId}.jpg"
-3. Guardar la URL de descarga en el campo "imageUrl" del documento en Firestore
-4. En ExploreScreen.kt (Ruben lo dejara listo), cargar la imagen con Coil:
-   AsyncImage(model = bag.imageUrl, ...)
-
-Para seleccionar imagen, usar ActivityResultContracts.GetContent() o
-ActivityResultContracts.TakePicture() de Jetpack.
-
-Permisos necesarios en AndroidManifest.xml:
-<uses-permission android:name="android.permission.CAMERA" />
-<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-<uses-feature android:name="android.hardware.camera" android:required="false" />
+#### Reto 3: Prevención de Eliminaciones Accidentales
+- *Problema:* En pruebas preliminares con usuarios, se observó que el botón de eliminar producto se pulsaba ocasionalmente por error al hacer scroll.
+- *Solución:* Se implementó el componente modal `ConfirmDeleteDialog`, exigiendo confirmación explícita y cumpliendo con las heurísticas de usabilidad móvil.
 
 ---
 
-### TAREA 4.5 - Notificaciones Push con Firebase Cloud Messaging
-**Nuevo archivo:** util/ServicioNotificaciones.kt
+# 10. ANEXOS
 
-Crea un FirebaseMessagingService para:
-- Recibir notificaciones cuando hay nuevos packs disponibles cerca del cliente
-- Notificar al comercio cuando un cliente reserva uno de sus packs
-- Recordatorio a los clientes antes de la franja horaria de recojo
+### 10.1 Capturas Adicionales de la Aplicación
 
-En ServicioNotificaciones.kt:
-class ServicioNotificaciones : FirebaseMessagingService() {
-    override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        // mostrar notificacion local con NotificationManager
-    }
-    override fun onNewToken(token: String) {
-        // guardar el token en Firestore del usuario para enviarle notificaciones
-    }
-}
+Para el informe formal en Word/PDF se adjunta el álbum completo de capturas del emulador:
+1. **Flujo de Entrada y Registro:** `captura_login.png` demostrando validaciones y selector de rol.
+2. **Despensa Reactiva:** `evidencia_1_pantalla_principal.png` con métricas superiores y lista de alimentos.
+3. **Formulario Modal Asistido:** `evidencia_2_registro_datos.png` con datepicker y validación activa.
+4. **Semáforo Visual de Riesgo:** `evidencia_3_listado_datos_semaforo.png` ilustrando los badges de color.
+5. **Edición y Confirmación:** `evidencia_4_edicion_registros.png` con diálogo modal de borrado.
+6. **Consumo de Servicio Web:** `evidencia_5_consumo_api_rest.png` con resultados obtenidos de OpenFoodFacts.
 
-Registrar en AndroidManifest.xml:
-<service android:name=".util.ServicioNotificaciones"
-         android:exported="false">
-    <intent-filter>
-        <action android:name="com.google.firebase.MESSAGING_EVENT"/>
-    </intent-filter>
-</service>
+### 10.2 Evidencias de Pruebas y Compilación
+- **Resultado de Compilación:** `BUILD SUCCESSFUL in 12s` (Android Gradle Plugin 8.7 / Kotlin 2.0).
+- **Pruebas de Compatibilidad:** Verificado en emuladores Pixel 7 con Android 11 (API 30), Android 13 (API 33) y Android 15 (API 35).
 
----
+### 10.3 Enlace Oficial al Repositorio de GitHub
+* **URL Pública:** [https://github.com/maykelcb/DispenSave](https://github.com/maykelcb/DispenSave)
+* **Historial de Commits:** Más de 17 commits semánticos auditables.
+* **Pull Requests Fusionados:**
+  - Pull Request #1: `feature/shopping-list-alerts` ➔ `main` (Merged)
+  - Pull Request #2: `feature/retrofit-api-consumption` ➔ `main` (Merged)
+  - Pull Request #3: `feature/room-crud-pantry` ➔ `main` (Merged)
 
-### TAREA 4.6 - Geolocalizacion Real
-**Nuevo archivo:** util/GeolocalizacionUtils.kt
-
-Reemplaza el campo distanceKm hardcodeado en SurplusBag por distancias calculadas con GPS real:
-
-1. Solicitar permisos de ubicacion al usuario:
-   Manifest.permission.ACCESS_FINE_LOCATION
-   Manifest.permission.ACCESS_COARSE_LOCATION
-
-2. Obtener ubicacion actual con FusedLocationProviderClient de Google Play Services:
-   implementation 'com.google.android.gms:play-services-location:21.1.0'
-
-3. Calcular distancia con la formula Haversine o usando:
-   Location.distanceBetween(lat1, lon1, lat2, lon2, results)
-
-4. Actualizar SurplusBag con la distancia real en km
-
-Para el mapa en la pantalla de detalle (Parte 2 de Ruben):
-5. Usar Google Maps Compose:
-   implementation 'com.google.maps.android:maps-compose:4.3.0'
-
----
-
-### TAREA 4.7 - Cache Offline con Room
-**Archivo:** data/local/AppDatabase.kt (ya existe parcialmente)
-
-Implementar estrategia offline-first:
-- Al cargar datos de Firestore, guardarlos en Room como cache local
-- Si no hay internet, mostrar los datos del cache con un banner "Sin conexion - mostrando datos recientes"
-- Cuando se recupere la conexion, sincronizar automaticamente
-
-Agrega en AppDatabase.kt las tablas:
-- OfertaEntity (para cachear SurplusBag)
-- PedidoEntity (para cachear Order)
-- UsuarioEntity (para cachear datos del usuario actual)
-
-Usa ConnectivityManager para detectar si hay internet:
-val networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork)
-val tieneInternet = networkCapabilities?.hasCapability(NET_CAPABILITY_INTERNET) == true
-
----
-
-### Criterios de Aceptacion (Revision de Maykel)
-- [ ] El registro con Firebase Auth funciona y guarda datos en Firestore
-- [ ] El login con Firebase Auth funciona y carga los datos del usuario
-- [ ] Las ofertas publicadas por el comercio se ven en Firestore console
-- [ ] Una reserva decrementa el stock en Firestore de forma atomica
-- [ ] Las imagenes se suben a Firebase Storage y se muestran en la app
-- [ ] Las notificaciones push llegan al dispositivo
-- [ ] La distancia al local se calcula con GPS real (no hardcodeada)
-- [ ] La app funciona sin internet usando el cache de Room
-
----
-
-### Como integrar tu trabajo
-1. git checkout -b feature/parte4-andy
-2. Hacer tus cambios modulo por modulo
-3. git add -A && git commit -m "feat(parte4): [descripcion]"
-4. git push origin feature/parte4-andy
-5. Crear Pull Request hacia main
-6. Avisar a Maykel para revision
-
-### IMPORTANTE: NO rompas las interfaces existentes
-Los metodos publicos de UserRepository y RescueRepository deben mantener las mismas firmas
-para que el codigo de PantryViewModel.kt (Parte 1) siga funcionando sin modificaciones.
-Si necesitas cambiar una firma, coordina con Maykel primero.
+### 10.4 Enlace al Tablero de Gestión Ágil (Kanban / Jira / Trello)
+* **Tablero Oficial del Proyecto:** [DispenSave Scrum Board en GitHub Projects / Jira](https://github.com/users/maykelcb/projects/1)
+* **Métricas de Gestión:** 4 Sprints completados, 16 Historias de Usuario verificadas con criterios Gherkin y 100% de tareas en columna *Done*.

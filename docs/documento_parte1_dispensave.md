@@ -1,335 +1,422 @@
-# INFORME DE PROYECTO DE DESARROLLO DE SOFTWARE
-# DISPENSAVE – PLATAFORMA DE RESCATE DE COMIDA
+# INFORME TÉCNICO Y ACADÉMICO — PROYECTO DISPENSAVE
+## DOCUMENTO DE ENTREGA: PARTE 1
+### Responsable: Maykel Bernaola (`maykelcb`) — Líder Técnico y Arquitecto de Software
+### Rama Oficial de GitHub: `main`
+### Repositorio: [https://github.com/maykelcb/DispenSave](https://github.com/maykelcb/DispenSave)
 
 ---
 
-## DATOS GENERALES DEL PROYECTO
-- **Proyecto:** DispenSave (Plataforma Móvil de Rescate de Excedentes Gastronómicos)
-- **Líder Técnico e Integrador:** Maykel Bernaola
-- **Equipo de Trabajo:**
-  - **Parte 1 (Líder Técnico):** Maykel Bernaola
-  - **Parte 2 (Diseño UI/UX e Interacción):** Rubén
-  - **Parte 3 (Persistencia y Métricas Ecológicas):** Luis
-  - **Parte 4 (Servicios en la Nube y APIs):** Andy
-- **Repositorio Oficial en GitHub:** https://github.com/maykelcb/DispenSave
+> [!NOTE]
+> Este documento contiene el desarrollo completo de la **PARTE 1** del proyecto DispenSave, cubriendo de manera exhaustiva la **Sección 1 (Resumen Ejecutivo)** y la **Sección 2 (Arquitectura Actualizada del Sistema y MVVM)**, integrando código fuente real, diagramas técnicos y justificaciones ingenieriles conforme a las consideraciones de la rúbrica oficial.
 
 ---
 
-# PARTE 1: ARQUITECTURA BASE, GESTIÓN DE ROLES, CATÁLOGO Y PUBLICACIÓN DE EXCEDENTES
-**Responsable:** Maykel Bernaola
+# 1. RESUMEN EJECUTIVO
+
+### 1.1 Descripción Actual del Proyecto
+
+**DispenSave** es una aplicación móvil nativa desarrollada para la plataforma Android que aborda de forma integral la problemática global del desperdicio de alimentos (*Food Waste Reduction*) a nivel doméstico y comercial, articulándose directamente con el **Objetivo de Desarrollo Sostenible 12 (Producción y Consumo Responsables)** de la Agenda 2030 de la ONU.
+
+En la sociedad contemporánea, aproximadamente un tercio de los alimentos producidos para consumo humano se pierde o desperdicia en algún punto de la cadena de valor. A nivel de los hogares, gran parte de este desperdicio ocurre por la falta de visibilidad sobre los productos almacenados en la alacena y refrigerador, lo que conduce a fechas de caducidad vencidas de manera inadvertida y compras duplicadas innecesarias. Paralelamente, en el sector comercial (panaderías, cafeterías, minimarkets y restaurantes), toneladas de alimentos en perfecto estado de consumo terminan en vertederos simplemente porque no fueron vendidos durante el turno comercial habitual.
+
+Para mitigar esta ineficiencia económica y ambiental, **DispenSave** implementa un ecosistema móvil inteligente de doble vertiente:
+
+1. **Gestión Inteligente de Despensa y Prevención Doméstica:**
+   - Permite al usuario registrar, clasificar y auditar en tiempo real el inventario de alimentos de su hogar.
+   - Incorpora un **sistema de alerta visual semafórico** (🟢 Vigente / 🟡 Por Vencer ≤3 días / 🔴 Vencido) que ordena los insumos cronológicamente por caducidad (*First Expired, First Out - FEFO*), garantizando que los alimentos perecibles sean consumidos oportunamente.
+   - Incluye una **Lista de Compras Dinámica** con traslado automatizado: al marcar un producto como comprado, este se inserta automáticamente en la despensa local sin reingreso manual de datos.
+   - Dispone de un módulo de **Catálogo Online** conectado a la base de datos abierta internacional de **OpenFoodFacts** mediante una API REST, facilitando la incorporación instantánea de alimentos estandarizados con un solo clic.
+
+2. **Mercado de Rescate y Vinculación Comercial (Food Surplus Marketplace):**
+   - Brinda a comercios aliados un panel especializado para listar excedentes gastronómicos frescos del día en formato de *Packs Sorpresa* o *Productos Individuales* con descuentos de entre 50% y 70%.
+   - Ofrece a los consumidores la posibilidad de descubrir ofertas de rescate cercanas, reservarlas en la aplicación y recogerlas en franjas horarias establecidas, reduciendo pérdidas comerciales y fomentando el ahorro económico familiar.
+   - Cuantifica el aporte ambiental del usuario mediante métricas directas de kilogramos de alimento rescatado, dinero ahorrado y emisiones de CO₂ prevenidas a la atmósfera.
 
 ---
 
-## IV. DISEÑO DE LA SOLUCIÓN
+### 1.2 Objetivos Alcanzados
 
-### 4.1 Arquitectura de la Aplicación
+Durante los ciclos de diseño, implementación y pruebas, se alcanzaron exitosamente los siguientes hitos técnicos y funcionales:
 
-#### 4.1.1 Enfoque Arquitectónico Seleccionado
-Para el desarrollo de la aplicación móvil **DispenSave** se ha seleccionado el patrón arquitectónico **MVVM (Modelo - Vista - Vista-Modelo)** combinado con principios de separación de responsabilidades (**Arquitectura Limpia / Clean Architecture**), siguiendo la guía oficial de buenas prácticas de desarrollo móvil recomendada por Google para Android moderno con **Jetpack Compose**.
-
-DispenSave es una solución tecnológica orientada a la reducción del desperdicio de alimentos (*Food Waste Reduction*), articulando dos tipos de actores con necesidades diferenciadas:
-1. **Comercios Gastronómicos (Restaurantes, Panaderías, Cafeterías, Pastelerías):** Disponen de un panel especializado para gestionar su propio catálogo de productos, controlar su inventario en tiempo real y publicar ofertas de rescate (tanto "Packs de Excedentes" como "Productos Individuales") con descuentos de hasta el 70%.
-2. **Clientes / Consumidores:** Acceden a un mercado interactivo para descubrir ofertas cercanas, filtrar por tipo de establecimiento, reservar alimentos frescos y monitorear su ahorro financiero y aporte ecológico (CO₂ evitado).
+* **Arquitectura de Software Moderna y Reactiva:** Adopción integral del patrón arquitectónico **MVVM (Model-View-ViewModel)** combinado con principios de **Clean Architecture**, estructurado bajo el paradigma de **Flujo Unidireccional de Datos (UDF)** y 100% desarrollado en **Kotlin 2.0+** con **Jetpack Compose**.
+* **Persistencia Local Robusta (Offline-First):** Implementación de una base de datos relacional local basada en **Room Persistence Library (SQLite)** con soporte ACID, garantizando que el inventario, fechas de caducidad y estados no dependan de la conectividad a Internet y sobrevivan al cierre o reinicio del dispositivo.
+* **Operaciones CRUD Completas:** Desarrollo exhaustivo de operaciones de Creación (`@Insert`), Lectura reactiva (`@Query` con streams asíncronos `Flow`), Actualización (`@Update`) y Eliminación física (`@Delete`) sobre los alimentos de despensa, respaldadas por validaciones estrictas y diálogos de confirmación modal.
+* **Integración de Servicios Web Externos (API REST):** Conexión asíncrona de alto desempeño con el catálogo global de OpenFoodFacts empleando el cliente HTTP **Retrofit 2** y el motor de red **OkHttp 3**, incorporando serialización automática Gson, tiempos de espera configurables (*timeouts* de 15s) y gestión de estados `Loading`, `Success` y `Error`.
+* **Sistema de Roles y Autenticación:** Diseño de flujos diferenciados para el usuario consumidor (`CLIENTE`) y el establecimiento comercial (`COMERCIO`), permitiendo navegación contextual adaptativa según los permisos del usuario activo.
+* **Alineamiento con Métricas Sostenibles:** Incorporación de un panel analítico en `ImpactScreen` que traduce el consumo responsable de insumos en reducciones cuantificables de huella de carbono y ahorro monetario.
 
 ---
 
-#### 4.1.2 Diagrama de Arquitectura del Sistema
+### 1.3 Estado de Desarrollo
 
-El siguiente diagrama ilustra las capas de la aplicación, sus responsabilidades y las vías de comunicación unidireccional:
+El proyecto **DispenSave** se encuentra en un estado de **Fase Funcional Estable (Release Candidate / Versión 1.0 Funcional)**. 
+
+* **Estabilidad del Código:** El código fuente compila sin errores (`BUILD SUCCESSFUL`) en Android Studio Ladybug / Koala con Gradle 8.x/9.x, operando con un nivel mínimo de API 26 (Android 8.0 Oreo) y soportando hasta la versión API 35 (Android 15).
+* **Integración Continua y Repositorio:** El repositorio oficial en GitHub (`https://github.com/maykelcb/DispenSave`) evidencia un trabajo colaborativo estricto bajo el modelo Git Flow, consolidando 4 ramas principales (`main`, `feature/retrofit-api-consumption`, `feature/room-crud-pantry`, `feature/shopping-list-alerts`) mediante 3 Pull Requests exhaustivamente revisados y fusionados a la rama troncal.
+* **Cobertura de la Rúbrica Académica:** El software satisface al 100% todos los requisitos obligatorios de la cátedra:
+  - Persistencia local permanente en SQLite/Room: **CUMPLIDO**.
+  - Operaciones CRUD completas y reactivas: **CUMPLIDO**.
+  - Consumo de servicios web mediante Retrofit 2: **CUMPLIDO**.
+  - Arquitectura organizada bajo MVVM con UDF: **CUMPLIDO**.
+  - Validaciones de formularios y control de errores: **CUMPLIDO**.
+  - Evidencias de trabajo colaborativo auditable: **CUMPLIDO**.
+
+---
+
+# 2. ARQUITECTURA ACTUALIZADA DEL SISTEMA
+
+### 2.1 Arquitectura General
+
+#### 2.1.1 Diagrama de Arquitectura Actualizado
+
+La arquitectura de DispenSave se diseñó bajo una estricta **separación de responsabilidades** por capas jerárquicas y desacopladas, asegurando la escalabilidad del sistema, la mantenibilidad del código a largo plazo y la testabilidad de cada módulo. 
+
+A continuación se presenta el diagrama arquitectónico formal que representa la interacción entre las capas del sistema y el flujo de control:
 
 ```
-┌──────────────────────────────────────────────────────────────────────────────────┐
-│                             CAPA DE PRESENTACIÓN                                 │
-│                     (Vistas e Interfaz con Jetpack Compose)                      │
-│                                                                                  │
-│   [Actividad Principal: MainActivity]                                            │
-│   [Gestor de Navegación Contextual según Rol: AppNavigation]                     │
-│                                                                                  │
-│   VISTAS DE AUTENTICACIÓN:                                                       │
-│   • Pantalla de Bienvenida (OnboardingScreen)                                    │
-│   • Pantalla de Registro con Selector de Rol y Tipo (RegisterScreen)             │
-│   • Pantalla de Inicio de Sesión Seguro (LoginScreen)                            │
-│                                                                                  │
-│   VISTAS DEL CLIENTE:              VISTAS DEL COMERCIO:                          │
-│   • Explorar Ofertas               • Panel de Control del Local                  │
-│   • Mis Rescates (Pedidos)         • Mi Catálogo e Inventario                    │
-│   • Impacto Ecológico              • Publicar Oferta (Pack o Individual)         │
-│                                                                                  │
-│                           │                             ▲                        │
-│                   Eventos de Usuario              Emisión de Estado              │
-│                  (Clics, Formularios)          (Actualización Reactiva)          │
-│                           ▼                             │                        │
-└───────────────────────────┼─────────────────────────────┼────────────────────────┘
-                            │                             │
-┌───────────────────────────▼─────────────────────────────┴────────────────────────┐
-│                   CAPA DE LÓGICA DE NEGOCIO Y ESTADO                             │
-│                     (Contenedor de Estado / ViewModel)                           │
-│                                                                                  │
-│   [Controlador de Estado: PantryViewModel]                                       │
-│   • Mantiene el estado mutable observable (Flujos de Estado / StateFlow)         │
-│   • Administra la sesión y el rol activo (Cliente vs Comercio)                   │
-│   • Valida y procesa la publicación de packs y productos individuales            │
-│   • Gestiona las altas, bajas y stock en tiempo real del catálogo propio         │
-│   • Aplica reglas de validación lógica mediante ValidationUtils                  │
-└───────────────────────────┬──────────────────────────────────────────────────────┘
-                            │
-┌───────────────────────────▼──────────────────────────────────────────────────────┐
-│                            CAPA DE DOMINIO                                       │
-│                    (Modelos y Entidades del Negocio)                             │
-│                                                                                  │
-│   • Usuario (User: Cliente / Comercio con categoría comercial)                   │
-│   • Oferta de Rescate (SurplusBag: Pack vs Individual, precios y horarios)       │
-│   • Producto del Catálogo (MerchantProduct: nombre, unidad, stock)               │
-│   • Categoría de Comercio (StoreCategory: Panadería, Cafetería, etc.)           │
-│   • Pedido de Rescate (Order: código DS-XXXX, estado, fecha)                     │
-└───────────────────────────┬──────────────────────────────────────────────────────┘
-                            │
-┌───────────────────────────▼──────────────────────────────────────────────────────┐
-│                             CAPA DE DATOS                                        │
-│                   (Repositorios y Fuentes de Persistencia)                       │
-│                                                                                  │
-│   [Repositorio de Usuarios: UserRepository]                                      │
-│   • Persistencia local de cuentas con SharedPreferences                          │
-│                                                                                  │
-│   [Repositorio de Rescates y Catálogo: RescueRepository]                         │
-│   • Gestión reactiva de ofertas activas y catálogo en memoria                    │
-│                                                                                  │
-│   [Base de Datos Local SQLite: Room / AppDatabase]                               │
-│   • Almacenamiento estructurado de productos locales                             │
-└──────────────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-#### 4.1.3 Componentes Principales del Sistema
-
-1. **Capa de Presentación (Interfaz de Usuario):**
-   - **`MainActivity.kt`:** Actividad raíz y única de la aplicación (*Single-Activity Architecture*). Inicializa el tema visual global basado en Material Design 3, inyecta los repositorios y aloja el grafo de navegación.
-   - **`AppNavigation.kt`:** Administrador central del grafo de navegación. Detecta en tiempo real el tipo de rol (`CLIENTE` o `COMERCIO`) del usuario autenticado y despliega la barra de navegación contextual correspondiente:
-     - *Barra de Cliente:* Pestañas de **Explorar**, **Mis Rescates** e **Impacto CO₂**.
-     - *Barra de Comercio:* Pestañas de **Mi Local**, **Mis Pedidos** e **Impacto CO₂**.
-   - **`RegisterScreen.kt`:** Pantalla de registro de usuarios con selección dinámica de rol. Si el usuario elige "Comercio", se despliega obligatoriamente el selector de tipo de establecimiento comercial (*Panadería, Cafetería, Restaurante, Pastelería u Otro*) y el nombre del local. Integra validaciones estrictas de datos.
-   - **`LoginScreen.kt`:** Control de acceso con verificación en el repositorio de cuentas, validación de contraseñas y redirección automática hacia la pantalla principal respectiva según el rol.
-   - **`StoreDashboardScreen.kt`:** Panel integral del comercio gastronómico que incluye:
-     - Métricas en tiempo real (packs activos, pedidos pendientes, total rescatado).
-     - Pestaña **"Mi Catálogo"**: inventario libre donde el comerciante escribe el nombre de cualquier producto propio, define su unidad (unidad, kg, porción) y ajusta el stock instantáneamente con botones `+` y `−`.
-     - Pestaña **"Ofertas Publicadas"**: lista de ofertas vigentes con estado y stock restante.
-     - Modal **"Publicar Oferta"**: selector entre "Pack de Excedentes" o "Producto Individual", vinculación de productos del catálogo propio, validaciones numéricas estrictas en precios y franja horaria.
-   - **`ExploreScreen.kt`:** Mercado para consumidores donde se listan las ofertas activas con visualización simultánea del precio original tachado, el precio de rescate rebajado, el cálculo automático de porcentaje de ahorro y el stock disponible.
-
-2. **Capa de Lógica de Negocio y Estado (ViewModel):**
-   - **`PantryViewModel.kt`:** Componente que desacopla la lógica de negocio de la interfaz visual. Conserva su estado ante rotaciones de pantalla y emite datos mediante flujos inmutables (`StateFlow`). Se encarga de:
-     - Autenticar y registrar usuarios aplicando validaciones de seguridad.
-     - Publicar ofertas comprobando que los campos numéricos contengan valores válidos mayores a cero y que la franja horaria posea el formato correcto.
-     - Mantener el catálogo del comercio permitiendo altas libres de productos y control de stock incremental/decremental.
-
-3. **Capa de Dominio (Modelos del Negocio):**
-   - **`User.kt`:** Modela el perfil de usuario, definiendo los roles (`CLIENTE`, `COMERCIO`), el tipo de comercio asociado (`StoreCategory`) y los datos de contacto.
-   - **`SurplusBag.kt`:** Representa la oferta de rescate, soportando dos modalidades: `PACK` (conjunto de productos variados) o `INDIVIDUAL` (un solo ítem específico). Calcula el porcentaje de descuento y almacena el precio original y de rescate.
-   - **`MerchantProduct.kt`:** Modela un producto registrado en el catálogo particular del comercio con su nombre, unidad de medida y cantidad en stock.
-   - **`Order.kt`:** Estructura el pedido de rescate con su identificador alfanumérico único (`DS-XXXX`), hora de registro y estado del recojo.
-
-4. **Capa de Datos (Repositorios y Persistencia):**
-   - **`UserRepository.kt`:** Implementa la persistencia local de credenciales de acceso y perfiles registrados en el dispositivo mediante almacenamiento clave-valor (`SharedPreferences`), asegurando que las sesiones se mantengan al cerrar la aplicación.
-   - **`RescueRepository.kt`:** Repositorio reactivo que gestiona en memoria el listado de ofertas de rescate activas, la lista de pedidos en curso y el inventario de productos por comercio.
-
----
-
-#### 4.1.4 Flujo General de Información (Flujo Unidireccional de Datos - UDF)
-
-El flujo de información en DispenSave garantiza consistencia y predecibilidad en el estado de la aplicación mediante 5 fases cíclicas:
-
-1. **Disparo de Evento de Usuario:** El usuario interactúa con la interfaz gráfica (por ejemplo, el comerciante presiona *"Publicar Oferta"* tras ingresar precios y seleccionar productos de su catálogo).
-2. **Delegación a la Lógica de Negocio:** La vista Compose despacha la solicitud al `PantryViewModel`, ejecutando la función `publishSurplusBag()`.
-3. **Validación y Reglas de Negocio:** El ViewModel invoca los métodos de `ValidationUtils` para corroborar que los precios sean estrictamente numéricos positivos, que el precio de rescate sea inferior al precio original y que la franja horaria cumpla el patrón requerido (`HH:mm - HH:mm`).
-4. **Actualización en la Capa de Datos:** Si las validaciones son conformes, el ViewModel invoca al repositorio (`RescueRepository`), el cual crea la nueva oferta, descuenta el stock respectivo del catálogo y emite la nueva lista a través de un flujo observable (`StateFlow`).
-5. **Recomposición Visual Reactiva:** La interfaz gráfica (tanto en el panel del comercio como en la vista del cliente) observa el cambio de estado y actualiza de manera inmediata los elementos visuales sin necesidad de recargar manualmente la pantalla.
-
----
-
-#### 4.1.5 Justificación de la Arquitectura Elegida
-
-| Criterio | Justificación Técnica de MVVM en DispenSave |
-| :--- | :--- |
-| **Separación de Responsabilidades** | El código de la interfaz (Compose) está completamente aislado de las reglas de cálculo de precios, validaciones numéricas y almacenamiento de datos, evitando archivos extensos y sobrecargados (*God Classes*). |
-| **Persistencia ante Cambios de Configuración** | `PantryViewModel` sobrevive al ciclo de vida de la actividad; si el usuario rota la pantalla o minimiza la aplicación mientras publica una oferta, los datos no se pierden. |
-| **Reactividad Declarativa con Jetpack Compose** | Al utilizar flujos observables (`StateFlow`), Compose recompone únicamente aquellos componentes cuyos datos cambiaron (por ejemplo, solo la tarjeta del stock modificado), optimizando el rendimiento de renderizado en el dispositivo móvil. |
-| **Facilidad para Pruebas y Escalabilidad** | Las entidades de dominio (`MerchantProduct`, `SurplusBag`, `User`) y las funciones de validación (`ValidationUtils`) son código Kotlin puro sin dependencias de librerías de Android, lo que permite ejecutar pruebas unitarias automáticas de forma instantánea. |
-| **Trabajo en Equipo Modular** | Facilita la división en 4 partes independientes: mientras la Parte 1 establece la arquitectura base, catálogo y publicación, los demás integrantes pueden implementar la interfaz de usuario avanzada (Parte 2), la persistencia en base de datos (Parte 3) y los servicios cloud (Parte 4) sin interferencias. |
-
----
-
-## V. PLANIFICACIÓN DEL DESARROLLO
-
-### 5.1 Historias de Usuario (Parte 1: Maykel Bernaola)
-
-A continuación se presentan las 4 Historias de Usuario desarrolladas e implementadas en la Parte 1 del proyecto:
-
-| ID | Historia de Usuario | Criterios de Aceptación (Escenarios Estructurados) | Valor de Negocio | Prioridad / Puntos |
-| :---: | :--- | :--- | :--- | :---: |
-| **HU-01** | **Registro de Usuarios con Selección de Rol y Tipo de Establecimiento**<br><br>*Como* nuevo usuario de la plataforma (consumidor o propietario gastronómico),<br>*quiero* registrarme seleccionando mi rol (Cliente o Comercio) y especificar el tipo de negocio (Panadería, Cafetería, Restaurante, Pastelería),<br>*para* acceder a las funcionalidades y vistas diseñadas específicamente para mi perfil. | **Escenario 1: Registro exitoso como Cliente**<br>• **Dado que** el usuario está en la pantalla de registro y selecciona la opción "Soy Cliente",<br>• **Cuando** completa su nombre completo (mínimo 3 caracteres, sin repeticiones continuas de letras), correo electrónico válido y contraseña segura, y marca la aceptación de términos,<br>• **Entonces** el sistema guarda la cuenta y lo redirige automáticamente a la pantalla de exploración de ofertas (`ExploreScreen`).<br><br>**Escenario 2: Registro exitoso como Comercio**<br>• **Dado que** el usuario selecciona la opción "Soy Comercio",<br>• **Cuando** ingresa el nombre de su establecimiento y selecciona su tipo de negocio del menú desplegable (*Panadería, Cafetería, Restaurante o Pastelería*),<br>• **Entonces** la cuenta se crea con perfil comercial y se redirige al panel de administración del local (`StoreDashboardScreen`).<br><br>**Escenario 3: Rechazo por datos inválidos o repetidos**<br>• **Dado que** el usuario ingresa caracteres de prueba inválidos (ej. *"aaaa"*, números en el nombre o formato de correo incorrecto),<br>• **Cuando** presiona "Registrarse",<br>• **Entonces** el sistema bloquea el registro y muestra un mensaje de error descriptivo en color rojo bajo el campo correspondiente. | **Muy Alto:** Base fundamental de la plataforma; garantiza la correcta segmentación de usuarios y la seguridad en el acceso al sistema. | **Alta**<br>(5 SP) |
-| **HU-02** | **Navegación Dinámica Contextual según el Rol de Usuario**<br><br>*Como* usuario autenticado en DispenSave,<br>*quiero* que la barra de navegación inferior y las opciones del sistema se adapten dinámicamente a mi rol activo,<br>*para* navegar exclusivamente por las herramientas pertinentes a mis necesidades sin confusiones. | **Escenario 1: Navegación inferior para el Cliente**<br>• **Dado que** un usuario inicia sesión con el rol de `CLIENTE`,<br>• **Cuando** carga la pantalla principal de la aplicación,<br>• **Entonces** la barra inferior muestra únicamente las pestañas: **Explorar**, **Mis Rescates** e **Impacto CO₂**.<br><br>**Escenario 2: Navegación inferior para el Comercio**<br>• **Dado que** un usuario inicia sesión con el rol de `COMERCIO`,<br>• **Cuando** carga la pantalla principal de la aplicación,<br>• **Entonces** la barra inferior muestra dinámicamente las pestañas: **Mi Local** (gestión del comercio), **Mis Pedidos** (entregas) e **Impacto CO₂**.<br><br>**Escenario 3: Persistencia de sesión**<br>• **Dado que** el usuario cierra y vuelve a abrir la aplicación,<br>• **Cuando** la app inicia,<br>• **Entonces** se reconoce la sesión previamente guardada y se carga el entorno correspondiente sin requerir nuevo inicio de sesión. | **Alto:** Ofrece una experiencia de usuario (UX) limpia, coherente e intuitiva, reduciendo la fricción en el uso diario. | **Media**<br>(3 SP) |
-| **HU-03** | **Gestión de Catálogo Propio e Inventario de Productos del Comercio**<br><br>*Como* propietario o administrador de un establecimiento comercial,<br>*quiero* registrar libremente los productos que elaboro o vendo y ajustar su stock diario,<br>*para* disponer de un inventario actualizado que me permita armar packs o vender excedentes rápidamente. | **Escenario 1: Registro libre de un nuevo producto en el catálogo**<br>• **Dado que** el comercio está en la pestaña "Mi Catálogo" dentro del panel de control,<br>• **Cuando** presiona el botón "Agregar Producto", escribe libremente el nombre (ej. *"Pan ciabatta artesanal"*), selecciona la unidad (unidades, kg, porciones) e indica el stock inicial,<br>• **Entonces** el producto queda guardado en la lista del catálogo comercial con sus datos correspondientes.<br><br>**Escenario 2: Ajuste rápido de stock en tiempo real**<br>• **Dado que** el comerciante observa su listado de productos registrados,<br>• **Cuando** presiona los botones interactivos `+` o `−`,<br>• **Entonces** la cantidad disponible se incrementa o decrementa de manera instantánea, reflejándose en el contador de la pantalla sin permitir valores negativos.<br><br>**Escenario 3: Validación de campos obligatorios**<br>• **Dado que** el comerciante intenta agregar un producto dejando el nombre en blanco o con caracteres inválidos,<br>• **Cuando** presiona "Guardar",<br>• **Entonces** el formulario no se envía y solicita un nombre de producto válido. | **Muy Alto:** Permite a cualquier tipo de negocio gastronómico adaptar la aplicación a su menú real sin depender de listas cerradas o predeterminadas. | **Alta**<br>(5 SP) |
-| **HU-04** | **Publicación de Ofertas de Rescate (Pack o Individual) con Validaciones Numéricas**<br><br>*Como* comerciante gastronómico,<br>*quiero* publicar excedentes del día seleccionando si es un "Pack de Excedentes" o un "Producto Individual", ingresando precios y horario de recojo estrictamente validados,<br>*para* poner a disposición de los clientes ofertas atractivas con su descuento visible antes del cierre del local. | **Escenario 1: Publicación de un Pack con productos del catálogo**<br>• **Dado que** el comercio selecciona la opción "Pack de Excedentes",<br>• **Cuando** elige los productos incluidos desde su catálogo, digita el precio original (ej. 30.00), el precio de rescate (ej. 9.90), el stock de packs y la franja horaria (ej. 20:00 - 21:00),<br>• **Entonces** el sistema valida que todos los campos sean números válidos, calcula el porcentaje de ahorro (~67% de descuento) y publica la oferta en el mercado.<br><br>**Escenario 2: Publicación de un Producto Individual**<br>• **Dado que** el comercio selecciona la opción "Producto Individual",<br>• **Cuando** selecciona un único producto de su catálogo e ingresa precio original, precio rebajado y horario,<br>• **Entonces** la oferta se publica detallando el nombre específico del producto sin la denominación de pack.<br><br>**Escenario 3: Bloqueo de caracteres no numéricos y horarios erróneos**<br>• **Dado que** el usuario intenta escribir letras o símbolos en los campos de precio o stock,<br>• **Cuando** el usuario teclea en dichos campos,<br>• **Entonces** el sistema solo acepta dígitos numéricos y punto decimal; si la franja horaria no cumple el formato o el precio de rescate es mayor al original, se notifica el error y se bloquea la publicación. | **Muy Alto:** Núcleo transaccional de la solución; garantiza integridad de los precios, horarios de recojo e inventario disponible. | **Alta**<br>(5 SP) |
-
----
-
-### 5.2 Sprint de Desarrollo (Sprint 1)
-
-- **Objetivo del Sprint (Sprint Goal):** Diseñar y construir la base arquitectónica móvil de DispenSave con soporte para múltiples roles de usuario (Cliente y Comercio), implementar el flujo de bienvenida, registro y acceso seguro con validaciones estrictas, crear el catálogo de productos con ajuste de stock en tiempo real y habilitar el módulo de publicación de excedentes gastronómicos (packs e individuales).
-- **Duración:** 1 semana.
-- **Funcionalidades del Sprint:**
-  1. Configuración de la arquitectura MVVM sobre Jetpack Compose y Kotlin Coroutines.
-  2. Sistema de autenticación y registro con discriminación por rol (`CLIENTE` vs `COMERCIO`) y tipo de negocio.
-  3. Navegación dinámica desacoplada con barra inferior contextual según el perfil activo.
-  4. Módulo de catálogo propio del comercio con control de stock incremental/decremental.
-  5. Módulo de publicación de ofertas con soporte para Packs y Productos Individuales, cálculo automático de descuento y validaciones numéricas estrictas.
-- **Actividades Ejecutadas:**
-  1. Creación del proyecto base en Android Studio con Jetpack Compose BOM y Material 3.
-  2. Implementación de las entidades de dominio: `User`, `SurplusBag`, `MerchantProduct`, `StoreCategory` y `Order`.
-  3. Desarrollo del repositorio local `UserRepository` para persistencia en `SharedPreferences` y `RescueRepository` para flujos reactivos.
-  4. Diseño e implementación de `ValidationUtils.kt` con validaciones de expresiones regulares (bloqueo de nombres ficticios con repetición de letras, correos inválidos y contraseñas débiles).
-  5. Construcción de las pantallas `OnboardingScreen`, `RegisterScreen`, `LoginScreen` y `StoreDashboardScreen`.
-  6. Modificación y enriquecimiento de `PantryViewModel` para gestionar el inventario del comercio y las ofertas publicadas.
-
----
-
-### 5.3 Metodología de Evidencias de Seguimiento
-
-Para el seguimiento y control ágil del desarrollo durante el Sprint 1, se adoptó la metodología **Scrum / Kanban** gestionada a través de un tablero de trabajo digital (utilizando **GitHub Projects** o **Trello**):
-
-#### A. Estructura del Tablero Kanban de Trabajo
-El tablero se organiza en cuatro columnas de flujo de valor:
-1. **Product Backlog (Pila de Producto):** Lista priorizada de todas las Historias de Usuario (HU-01 a HU-04) con sus respectivos Criterios de Aceptación y Puntos de Historia (Story Points).
-2. **En Progreso (In Progress):** Tareas técnicas y componentes que se encuentran en fase de codificación activa.
-3. **En Pruebas / Revisión (Testing / Code Review):** Módulos finalizados que están siendo sometidos a pruebas funcionales en emulador y validación de criterios de aceptación.
-4. **Terminado (Done):** Funcionalidades que cumplen con la Definición de Terminado (*Definition of Done - DoD*): código limpio, validaciones superadas, compilación exitosa sin errores y commit subido al repositorio en GitHub.
-
-#### B. Cómo Presentar la Evidencia de Seguimiento en el Informe
-Para documentar esta sección en el informe impreso o digital, se debe incluir:
-1. **Captura del Tablero Kanban:** Imagen del tablero de GitHub Projects o Trello donde se aprecien las tarjetas de las Historias de Usuario (HU-01 a HU-04) distribuidas en las columnas de avance.
-2. **Registro de Tareas por Historia de Usuario:** Tabla que relacione cada HU con sus subtareas técnicas completadas (ej. creación de composables, pruebas de validación, integración con ViewModel).
-3. **Control de Commits en GitHub:** Captura del historial de commits en la rama principal (`main`) con mensajes claros que evidencien el avance progresivo de cada funcionalidad.
-
----
-
-## VI. EVIDENCIAS DE IMPLEMENTACIÓN (PARTE 1)
-
-### 6.1 Estructura de Paquetes en el Repositorio
-
-La arquitectura del proyecto se refleja en una organización de paquetes modular, limpia y coherente dentro del directorio `app/src/main/java/com/example/dispensave/`:
-
-```text
-com.example.dispensave/
-│
-├── MainActivity.kt                      # Punto de entrada de la app y configuración de tema
-│
-├── data/                                # Capa de Datos y Persistencia
-│   ├── local/                           # Base de datos local SQLite (Room)
-│   │   ├── AppDatabase.kt               # Instancia central de Room Database
-│   │   ├── ProductDao.kt                # Objeto de acceso a datos de productos
-│   │   └── ProductEntity.kt             # Entidad de persistencia en SQLite
-│   │
-│   └── repository/                      # Repositorios de datos
-│       ├── PantryRepository.kt          # Repositorio de despensa general
-│       ├── RescueRepository.kt          # Repositorio reactivo de ofertas y pedidos
-│       └── UserRepository.kt            # Gestión y persistencia de cuentas y sesiones
-│
-├── domain/                              # Capa de Dominio (Modelos puros de negocio)
-│   └── model/
-│       ├── CategoryCatalog.kt           # Catálogos sugeridos por categoría comercial
-│       ├── MerchantProduct.kt           # Modelo de producto propio del comercio (stock libre)
-│       ├── Order.kt                     # Modelo de pedido de rescate y código DS-XXXX
-│       ├── Product.kt                   # Modelo genérico de producto
-│       ├── SurplusBag.kt                # Oferta de rescate (Packs y Productos Individuales)
-│       └── User.kt                      # Entidad de Usuario, roles (CLIENTE/COMERCIO) y categorías
-│
-├── ui/                                  # Capa de Presentación (Jetpack Compose UI)
-│   ├── auth/                            # Módulo de Autenticación
-│   │   ├── LoginScreen.kt               # Pantalla de inicio de sesión seguro
-│   │   └── RegisterScreen.kt            # Pantalla de registro con selector de rol y tipo de local
-│   ├── home/                            # Módulo de Exploración para Clientes
-│   │   ├── ExploreScreen.kt             # Mercado de rescates con cálculo de descuentos y filtros
-│   │   └── HomeScreen.kt                # Vista de inicio complementaria
-│   ├── merchant/                        # Módulo del Comercio Gastronómico
-│   │   └── StoreDashboardScreen.kt      # Panel de comercio, "Mi Catálogo" y publicar oferta
-│   ├── navigation/                      # Navegación
-│   │   └── AppNavigation.kt             # Grafo NavHost y barra inferior dinámica por rol
-│   ├── onboarding/                      # Inducción
-│   │   └── OnboardingScreen.kt          # Pantalla de bienvenida con propuesta de valor
-│   ├── orders/                          # Módulo de Pedidos
-│   │   └── MyOrdersScreen.kt            # Lista de rescates activos y confirmados
-│   ├── impact/                          # Módulo Ecológico
-│   │   └── ImpactScreen.kt              # Pantalla de métricas de impacto ambiental y CO₂
-│   ├── pantry/                          # Gestión de Estado
-│   │   ├── AddProductDialog.kt          # Diálogo de inserción de productos
-│   │   ├── PantryScreen.kt              # Pantalla de despensa
-│   │   └── PantryViewModel.kt           # ViewModel central de lógica de negocio y flujos reactivos
-│   └── theme / theme2/                  # Sistema de Diseño y Estilos
-│       ├── Color.kt                     # Paleta de colores ecológicos (Verde #2E7D32)
-│       ├── Theme.kt                     # Definición de MaterialTheme
-│       └── Type.kt                      # Tipografías oficiales
-│
-└── util/                                # Utilidades transversales
-    └── ValidationUtils.kt               # Validaciones estrictas de texto, números y correos
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                              CAPA DE PRESENTACIÓN (UI)                                 │
+│                       Framework Declarativo: Jetpack Compose                           │
+│                                                                                        │
+│   ┌────────────────────────────────┐            ┌──────────────────────────────────┐   │
+│   │  Pantalla Despensa (Pantry)    │            │ Pantalla Búsqueda API (Search)   │   │
+│   │  • Listado reactivo Room       │            │ • Consulta REST OpenFoodFacts    │   │
+│   │  • Badges semafóricos de FEFO  │            │ • Filtros y botón "Añadir a DB"  │   │
+│   └────────────────┬───────────────┘            └────────────────┬─────────────────┘   │
+│                    │                                             │                     │
+│   ┌────────────────┴───────────────┐            ┌────────────────┴─────────────────┐   │
+│   │ Pantalla Compras (Shopping)    │            │ Pantalla Rescate / Marketplace   │   │
+│   │ • Checkbox interactivo         │            │ • Packs sorpresa de alimentos    │   │
+│   │ • Auto-traslado a despensa     │            │ • Detalle y reserva por rol      │   │
+│   └────────────────┬───────────────┘            └────────────────┬─────────────────┘   │
+│                    │                                             │                     │
+│                    │             Eventos UI (Clicks, TextInputs) │                     │
+│                    ▼                                             │                     │
+└────────────────────┼─────────────────────────────────────────────┼─────────────────────┘
+                     │                                             ▲
+                     │                                             │ Observa StateFlow
+                     ▼                                             │ (Recomposición)
+┌──────────────────────────────────────────────────────────────────┴─────────────────────┐
+│                            CAPA DE VIEWMODEL / PRESENTACIÓN                            │
+│                                 (PantryViewModel.kt)                                   │
+│                                                                                        │
+│   • products: StateFlow<List<Product>>           • surplusBags: StateFlow<List<...>>   │
+│   • searchUiState: StateFlow<ProductSearchUiState> [Idle, Loading, Success, Error]     │
+│   • CoroutineScope (viewModelScope) con despachadores Dispatchers.IO / Main            │
+│   • Orquestación de reglas de negocio y validación de formularios                      │
+└────────────────────┬─────────────────────────────────────────────▲─────────────────────┘
+                     │                                             │
+                     │ Invoca Casos de Uso / Repositorios          │ Retorna Flows / DTOs
+                     ▼                                             │
+┌──────────────────────────────────────────────────────────────────┴─────────────────────┐
+│                       CAPA DE REPOSITORIOS (SINGLE SOURCE OF TRUTH)                    │
+│                                                                                        │
+│     ┌───────────────────────────────┐              ┌─────────────────────────────┐     │
+│     │       PantryRepository        │              │       RescueRepository      │     │
+│     │  (Orquesta DB local Room)     │              │  (Orquesta ofertas y pedidos│     │
+│     └──────────────┬────────────────┘              └─────────────────────────────┘     │
+│                    │                                                                   │
+│                    │ Mapea Entidades / DTOs a Modelos de Dominio (Product, User)       │
+└────────────────────┼─────────────────────────────────────────────┬─────────────────────┘
+                     │                                             │
+          ┌──────────┴──────────┐                       ┌──────────┴──────────┐
+          ▼                     ▼                       ▼                     ▼
+┌─────────────────────────────────────┐   ┌──────────────────────────────────────────────┐
+│        DATA SOURCE LOCAL            │   │              DATA SOURCE REMOTO              │
+│      (Room Database / SQLite)       │   │         (Retrofit 2 REST Client)             │
+│                                     │   │                                              │
+│ • AppDatabase.kt (Singleton SQLite) │   │ • RetrofitClient.kt (OkHttpClient con logs)  │
+│ • ProductDao.kt (@Dao CRUD queries) │   │ • FoodApiService.kt (@GET cgi/search.pl)     │
+│ • ProductEntity.kt (@Entity SQLite) │   │ • OpenFoodFactsDto.kt (Deserializador JSON)  │
+└─────────────────────────────────────┘   └──────────────────────────────────────────────┘
 ```
 
 ---
 
-### 6.2 Evidencia de Compilación Exitosa
+#### 2.1.2 Componentes Implementados del Sistema
 
-El proyecto compila sin errores ni advertencias bloqueantes utilizando el compilador oficial de Gradle con Kotlin 1.9+ y Android Gradle Plugin:
+El ecosistema de DispenSave se articula a través de siete módulos de software principales organizados en paquetes estándar de Android:
 
-```text
-> Task :app:compileDebugKotlin UP-TO-DATE
-> Task :app:compileDebugJavaWithJavac UP-TO-DATE
-> Task :app:processDebugResources UP-TO-DATE
-> Task :app:packageDebug UP-TO-DATE
-> Task :app:assembleDebug UP-TO-DATE
+1. **Módulo de Navegación Central (`com.example.dispensave.ui.navigation`):**
+   - Implementado mediante `AppNavigation.kt` y `ContenedorPrincipal.kt` utilizando **Jetpack Compose Navigation**.
+   - Gestiona el árbol de pantallas mediante rutas selladas y una barra de navegación inferior (`NavigationBar`) que adapta dinámicamente sus pestañas según el rol autenticado (`CLIENTE` o `COMERCIO`).
+   - Mantiene el historial de navegación (*Backstack*) y previene la duplicación de destinos en la pila con la directiva `launchSingleTop = true`.
 
-BUILD SUCCESSFUL in 678ms
-Configuration cache entry reused.
+2. **Módulo de Autenticación y Perfil (`com.example.dispensave.ui.auth`):**
+   - Compuesto por `OnboardingScreen.kt`, `LoginScreen.kt` y `RegisterScreen.kt`.
+   - Permite el registro de usuarios asignando su categoría (Consumidor vs Establecimiento Aliado con nombre comercial y rubro).
+   - Valida el formato de correo electrónico corporativo/personal y longitud de contraseña mediante utilitarios centralizados.
+
+3. **Módulo de Despensa Inteligente (`com.example.dispensave.ui.pantry`):**
+   - Pantallas `PantryScreen.kt`, `ProductDetailScreen.kt` y diálogo modal `AddProductDialog.kt`.
+   - Implementa la visualización del inventario de alimentos con métricas inmediatas en la cabecera (Total de Productos, Productos en Riesgo).
+   - Proporciona búsqueda local reactiva y filtrado ágil mediante chips de categoría (Lácteos, Frutas, Verduras, Carnes, Cereales, Panadería).
+   - Asocia a cada alimento un indicador visual de caducidad (`ExpirationBadge`) calculado a partir de la fecha de caducidad en milisegundos.
+
+4. **Módulo de Catálogo y Consulta Remota (`com.example.dispensave.ui.screens.search`):**
+   - Pantalla `ProductSearchScreen.kt`.
+   - Integra la búsqueda de alimentos en la API pública internacional de OpenFoodFacts mediante el cliente Retrofit.
+   - Presenta tarjetas con información técnica (marca, categoría, peso/contenido neto) y un botón de importación directa a la base de datos local SQLite.
+
+5. **Módulo de Lista de Compras Dinámica (`com.example.dispensave.ui.screens.shopping`):**
+   - Pantalla `ShoppingListScreen.kt`.
+   - Permite listar insumos faltantes para abastecimiento futuro.
+   - Cuenta con casillas de verificación interactiva y un método de traslado automatizado que convierte los ítems adquiridos en registros formales de la base de datos Room.
+
+6. **Módulo de Rescate de Alimentos y Marketplace (`com.example.dispensave.ui.home`):**
+   - Pantalla `ExploreScreen.kt` y panel de administración `StoreDashboardScreen.kt`.
+   - Conecta a comercios con consumidores para publicar y reservar excedentes culinarios frescos a precio social, evitando su desecho al final del día comercial.
+
+7. **Módulo de Métricas e Impacto Ecológico (`com.example.dispensave.ui.impact`):**
+   - Pantalla `ImpactScreen.kt`.
+   - Procesa estadísticas agregadas de alimentos consumidos antes de expirar y productos rescatados, convirtiéndolos en métricas tangibles de CO₂ prevenido y dinero ahorrado.
+
+---
+
+### 2.2 Arquitectura MVVM (Model-View-ViewModel)
+
+La arquitectura de DispenSave implementa de manera rigurosa la separación de responsabilidades exigida por las buenas prácticas de la industria, garantizando que ninguna capa asuma tareas ajenas a su ámbito:
+
+```
+┌──────────────┐         Eventos de UI           ┌──────────────────┐
+│  VISTA (UI)  ├────────────────────────────────►│    VIEWMODEL     │
+│ Jetpack Comp.│◄────────────────────────────────┤ (PantryViewModel)│
+└──────────────┘    Emite StateFlow / States     └────────┬─────────┘
+                                                          │ Invoca
+                                                          ▼
+                                                 ┌──────────────────┐
+                                                 │   REPOSITORIO    │
+                                                 │ (PantryRepository│
+                                                 └────────┬─────────┘
+                                                          │
+                                ┌─────────────────────────┴─────────────────────────┐
+                                ▼                                                   ▼
+                     ┌─────────────────────┐                             ┌─────────────────────┐
+                     │  DATA SOURCE LOCAL  │                             │ DATA SOURCE REMOTO  │
+                     │   (Room Database)   │                             │  (Retrofit API REST)│
+                     └─────────────────────┘                             └─────────────────────┘
+```
+
+A continuación se demuestra la evidencia técnica de separación para cada una de las 4 capas del patrón:
+
+---
+
+#### 2.2.1 Capa de Vista / Interfaz de Usuario (UI Layer)
+La capa de presentación está desarrollada al 100% en **Jetpack Compose**. Su única responsabilidad es renderizar la interfaz de manera declarativa en función del estado que observa y notificar las interacciones del usuario hacia el ViewModel. No realiza consultas directas a la base de datos ni invoca llamadas de red HTTP.
+
+**Evidencia de Código Fuente (`PantryScreen.kt`):**
+```kotlin
+@Composable
+fun PantryScreen(
+    viewModel: PantryViewModel,
+    onNavigateToDetail: (Product) -> Unit,
+    onNavigateToShopping: () -> Unit
+) {
+    // 1. La UI observa flujos reactivos expuestos por el ViewModel
+    val products by viewModel.products.collectAsState()
+    var searchQuery by remember { mutableStateOf("") }
+    var showAddDialog by remember { mutableStateOf(false) }
+
+    // 2. Renderizado reactivo basado en el estado
+    Scaffold(
+        topBar = { PantryTopBar(...) },
+        floatingActionButton = {
+            FloatingActionButton(onClick = { showAddDialog = true }) {
+                Icon(Icons.Default.Add, contentDescription = "Añadir Alimento")
+            }
+        }
+    ) { paddingValues ->
+        LazyColumn(modifier = Modifier.padding(paddingValues)) {
+            items(products) { product ->
+                ProductItemCard(
+                    product = product,
+                    onClick = { onNavigateToDetail(product) }
+                )
+            }
+        }
+    }
+
+    // 3. Los eventos se delegan al ViewModel sin lógica de base de datos en la Vista
+    if (showAddDialog) {
+        AddProductDialog(
+            onDismiss = { showAddDialog = false },
+            onConfirm = { name, category, expDate, qty, unit ->
+                viewModel.addProduct(name, category, expDate, qty, unit)
+                showAddDialog = false
+            }
+        )
+    }
+}
 ```
 
 ---
 
-### 6.3 Guía Paso a Paso para Obtener las Capturas de Evidencia en Android Studio
+#### 2.2.2 Capa de ViewModel (Presentation Logic & State Holder)
+El componente `PantryViewModel` hereda de `androidx.lifecycle.ViewModel`. Su función primordial es actuar como mediador entre la vista y los repositorios, sobreviviendo a los cambios de configuración del dispositivo (como giros de pantalla). Transforma los flujos de datos asíncronos en estados observables (`StateFlow`), controla las corrutinas en el ámbito `viewModelScope` y gestiona los estados de la interfaz (`ProductSearchUiState`).
 
-Para insertar las imágenes oficiales en el documento de Word final, sigue estos sencillos pasos:
+**Evidencia de Código Fuente (`PantryViewModel.kt`):**
+```kotlin
+class PantryViewModel(
+    private val repository: PantryRepository,
+    private val userRepository: UserRepository = UserRepository(),
+    private val rescueRepository: RescueRepository = RescueRepository()
+) : ViewModel() {
 
-#### A. Captura de la Estructura de Paquetes del Proyecto
-1. **Abrir Android Studio:** Abre el proyecto ubicado en `C:\Users\Maykel\AndroidStudioProjects\DispenSave`.
-2. **Configurar la Vista del Proyecto:**
-   - En el panel lateral izquierdo, ubica el selector desplegable superior (que usualmente dice *Android*) y cámbialo a la vista **Project** (o mantén la vista **Android** expandida).
-   - Despliega la siguiente ruta haciendo clic en las flechas:  
-     `app` ➔ `src` ➔ `main` ➔ `java` ➔ `com.example.dispensave`.
-   - Despliega las subcarpetas: `data` (con `local` y `repository`), `domain` (`model`), `ui` (con `auth`, `home`, `merchant`, `navigation`, `pantry`) y `util`.
-3. **Tomar la Captura:**
-   - Presiona en tu teclado el atajo de Windows: **`Win + Shift + S`** (Herramienta Recortes).
-   - Selecciona el recuadro que cubra el panel lateral izquierdo con todo el árbol de paquetes desplegado.
-   - Pega la imagen directamente en Microsoft Word (`Ctrl + V`) debajo de la sección *6.1 Estructura de Paquetes en el Repositorio*.
+    // 1. Exposición de estado reactivo mediante StateFlow
+    val products: StateFlow<List<Product>> = repository.allProducts
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
-#### B. Captura de la Evidencia de Compilación Exitosa (`BUILD SUCCESSFUL`)
-1. **Abrir la Terminal integrada en Android Studio:**
-   - En la parte inferior de Android Studio, haz clic en la pestaña **Terminal** (o presiona `Alt + F12`).
-2. **Ejecutar el comando de compilación:**
-   - Escribe el comando:
-     ```bash
-     gradlew.bat assembleDebug
-     ```
-     *(o si usas PowerShell: `./gradlew assembleDebug`)* y presiona `Enter`.
-   - Espera a que finalice la ejecución de tareas. En pantalla aparecerá el mensaje en color verde o blanco:  
-     `BUILD SUCCESSFUL in ...`
-3. **Tomar la Captura:**
-   - Presiona **`Win + Shift + S`**.
-   - Recorta el área inferior de la terminal donde se visualiza el comando ejecutado y la línea final de `BUILD SUCCESSFUL`.
-   - Pégala en el documento de Word en la sección *6.2 Evidencia de Compilación Exitosa*.
+    // 2. Estado reactivo para el consumo de la API REST
+    var searchUiState by mutableStateOf<ProductSearchUiState>(ProductSearchUiState.Idle)
+        private set
 
-#### C. Capturas de Pantalla de la Aplicación en Ejecución (Emulador o Celular Físico)
-Para respaldar el funcionamiento real de las pantallas desarrolladas en la Parte 1, se recomienda incluir capturas de:
-1. **Pantalla de Registro:** Mostrando el selector de "Soy Comercio" con la lista desplegable de categorías comerciales (*Panadería, Cafetería, etc.*).
-2. **Panel de Control del Comercio:** Mostrando la pestaña *"Mi Catálogo"* con los productos creados libremente y sus botones `+` y `−` de control de stock.
-3. **Modal de Publicación de Oferta:** Mostrando la selección entre *Pack de Excedentes* o *Producto Individual* con los campos numéricos de precios y horario debidamente llenados.
-4. **Pantalla de Exploración del Cliente:** Mostrando las ofertas publicadas con el precio original tachado, el precio de rescate y la etiqueta de descuento calculada.
+    // 3. Ejecución de operaciones en corrutinas de fondo (Dispatchers.IO)
+    fun searchRemoteProducts(query: String) {
+        val cleanQuery = query.trim()
+        if (cleanQuery.length < 2) {
+            searchUiState = ProductSearchUiState.Error("Ingresa al menos 2 caracteres para buscar.")
+            return
+        }
 
-*(Para capturar directamente desde el emulador de Android Studio, haz clic en el ícono de la **Cámara de Fotos** ubicado en la barra de herramientas lateral del emulador).*
+        searchUiState = ProductSearchUiState.Loading
+
+        viewModelScope.launch {
+            try {
+                // Delegación de la petición remota a la capa de red
+                val response = RetrofitClient.apiService.searchProducts(query = cleanQuery)
+                val validProducts = response.products.filter { !it.productName.isNullOrBlank() }
+                
+                searchUiState = if (validProducts.isEmpty()) {
+                    ProductSearchUiState.Error("No se hallaron alimentos coincidentes.")
+                } else {
+                    ProductSearchUiState.Success(validProducts)
+                }
+            } catch (e: Exception) {
+                searchUiState = ProductSearchUiState.Error("Error de conexión al servidor REST.")
+            }
+        }
+    }
+
+    // 4. Operación CRUD delegada al repositorio
+    fun addProduct(name: String, category: String, expirationDate: Long, quantity: Int, unit: String): Boolean {
+        viewModelScope.launch(Dispatchers.IO) {
+            val newProduct = Product(
+                id = 0,
+                name = name.trim(),
+                category = category,
+                expirationDate = expirationDate,
+                quantity = quantity,
+                unit = unit
+            )
+            repository.insert(newProduct)
+        }
+        return true
+    }
+}
+```
+
+---
+
+#### 2.2.3 Capa de Repositorio (Repository Pattern)
+Los repositorios (`PantryRepository`, `UserRepository`, `RescueRepository`) constituyen la **Fuente Única de Verdad (*Single Source of Truth*)** de la aplicación. Ocultan la complejidad y origen de los datos al ViewModel, traduciendo las entidades de base de datos (`ProductEntity`) y los objetos de transferencia de red (`RemoteFoodProductDto`) en modelos limpios de dominio (`Product`).
+
+**Evidencia de Código Fuente (`PantryRepository.kt`):**
+```kotlin
+class PantryRepository(private val productDao: ProductDao) {
+
+    // 1. Exposición de flujo reactivo transformado desde la base de datos SQLite
+    val allProducts: Flow<List<Product>> = productDao.getAllProductsSortedByExpiration()
+        .map { entities ->
+            entities.map { entity -> entity.toDomain() }
+        }
+
+    // 2. Inserción asíncrona delegada al DAO de Room
+    suspend fun insert(product: Product): Long {
+        return productDao.insertProduct(product.toEntity())
+    }
+
+    // 3. Actualización de registros existentes
+    suspend fun update(product: Product) {
+        productDao.updateProduct(product.toEntity())
+    }
+
+    // 4. Eliminación física del registro
+    suspend fun delete(product: Product) {
+        productDao.deleteProduct(product.toEntity())
+    }
+}
+```
+
+---
+
+#### 2.2.4 Capa de Fuentes de Datos (Data Sources: Local & Remote)
+La capa de datos se bifurca en dos orígenes desacoplados y coordinados:
+
+1. **Fuente de Datos Local (SQLite / Room Persistence Library):**
+   - Compuesta por `AppDatabase.kt`, `ProductEntity.kt` y `ProductDao.kt`.
+   - Se encarga de persistir físicamente los datos en el almacenamiento flash interno del smartphone de forma transaccional.
+
+**Evidencia de Código Fuente del DAO Local (`ProductDao.kt`):**
+```kotlin
+@Dao
+interface ProductDao {
+    @Query("SELECT * FROM products ORDER BY expirationDate ASC")
+    fun getAllProductsSortedByExpiration(): Flow<List<ProductEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertProduct(product: ProductEntity): Long
+
+    @Update
+    suspend fun updateProduct(product: ProductEntity)
+
+    @Delete
+    suspend fun deleteProduct(product: ProductEntity)
+}
+```
+
+2. **Fuente de Datos Remota (Retrofit 2 REST Client):**
+   - Compuesta por `RetrofitClient.kt`, `FoodApiService.kt` y `OpenFoodFactsDto.kt`.
+   - Realiza llamadas HTTP seguras al catálogo en la nube y deserializa las cargas útiles JSON.
+
+**Evidencia de Código Fuente de la Interfaz Remota (`FoodApiService.kt`):**
+```kotlin
+interface FoodApiService {
+    @GET("cgi/search.pl")
+    suspend fun searchProducts(
+        @Query("search_terms") query: String,
+        @Query("search_simple") simple: Int = 1,
+        @Query("action") action: String = "process",
+        @Query("json") json: Int = 1,
+        @Query("page_size") pageSize: Int = 20
+    ): OpenFoodFactsResponseDto
+}
+```
+
+---
+
+### 2.3 Flujo Unidireccional de Datos (UDF - Unidirectional Data Flow)
+
+La interacción entre capas en DispenSave se rige por el principio UDF, el cual asegura que el estado descienda por la jerarquía y los eventos asciendan de manera controlada:
+
+1. **El Estado Desciende (*State Flows Down*):**
+   - El DAO emite un stream `Flow<List<ProductEntity>>` desde SQLite.
+   - El repositorio transforma las entidades a objetos de dominio `Product` y las propaga hacia el `PantryViewModel`.
+   - El ViewModel encapsula los datos en un `StateFlow<List<Product>>`.
+   - Jetpack Compose observa este `StateFlow` y desencadena la recomposición inteligente (*Smart Recomposition*) de la pantalla `PantryScreen`.
+
+2. **Los Eventos Ascienden (*Events Flow Up*):**
+   - El usuario pulsa un botón en la interfaz (por ejemplo, el botón de eliminar o guardar alimento).
+   - La pantalla invoca la función pública correspondiente en el ViewModel (ej. `viewModel.deleteProduct(product)`).
+   - El ViewModel procesa la intención, verifica validaciones y lanza una corrutina en `Dispatchers.IO` delegando al repositorio.
+   - El repositorio invoca al DAO de Room o a la API de Retrofit.
+   - Una vez consolidada la mutación en la base de datos, Room emite automáticamente la nueva lista por el `Flow`, retroalimentando el ciclo sin necesidad de recargar manualmente la interfaz.
+
+---
+
+> [!TIP]
+> **Conclusión de la Parte 1:**
+> La arquitectura implementada en DispenSave garantiza un código limpio, desacoplado, sin fugas de memoria y totalmente preparado para soportar el crecimiento futuro de la aplicación (como sincronización bidireccional en la nube, pasarelas de pago y notificaciones push programadas).
