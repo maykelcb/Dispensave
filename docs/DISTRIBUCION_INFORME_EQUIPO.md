@@ -1,102 +1,78 @@
-﻿# ASIGNACIÓN OFICIAL DE RAMAS Y SECCIONES DEL PROYECTO
-## DispenSave — Plataforma de Rescate de Comida
-
-El repositorio oficial de GitHub cuenta con **4 ramas exactas** (la rama principal `main` y 3 ramas de trabajo paralelas para los integrantes). Cada colaborador tiene asignada una rama específica de Git, sus módulos de código y sus secciones correspondientes para el informe académico formal en Word/PDF.
+# 📋 PLAN MAESTRO DE DISTRIBUCIÓN COLABORATIVA DEL PROYECTO DISPENSAVE
+## Asignación Equitativa en 4 Partes (GitHub + Informe Académico Oficial)
 
 ---
 
-### TABLA MAESTRA DE ASIGNACIÓN (RAMAS DE GITHUB Y ROLES)
-
-| Integrante | Rol Oficial | Rama Real de Git en GitHub | Secciones del Informe a Redactar | Historias de Usuario | Sprint Asignado | Guía Detallada en Repo |
-|:---|:---|:---:|:---:|:---:|:---:|:---|
-| **Maykel Bernaola** (`maykelcb`) | Líder Técnico e Integrador de Arquitectura | `main` | **4.1** Arquitectura de la aplicación<br>**VI.1** Evidencias P1 | **HU01 a HU04** | Sprint 1 | [docs/documento_parte1_dispensave.md](documento_parte1_dispensave.md) |
-| **Rubén** | Desarrollador APIs & Consumo REST | `feature/retrofit-api-consumption` | **4.2** Tecnologías y Servicios API REST<br>**VI.2** Evidencias P2 | **HU05 a HU08** | Sprint 2 | [docs/parte2_ruben.md](parte2_ruben.md) |
-| **Luis** | Desarrollador Backend Local & Persistencia Room | `feature/room-crud-pantry` | **4.3** Diseño de base de datos (Modelo ER y Diccionario)<br>**VI.3** Evidencias P3 | **HU09 a HU12** | Sprint 3 | [docs/parte3_luis.md](parte3_luis.md) |
-| **Anderson Abanto** (`Anderson08102001` / Andy) | Desarrollador UI/UX & Lista de Compras | `feature/shopping-list-alerts` | **4.4** Diseño de interfaces (Wireflow y Heurísticas)<br>**VI.4** Evidencias P4 | **HU13 a HU16** | Sprint 4 | [docs/parte4_shopping_alerts.md](parte4_shopping_alerts.md) |
+### DATOS GENERALES DEL PROYECTO
+- **Proyecto:** DispenSave — Plataforma Inteligente de Rescate de Alimentos y Gestión de Despensa
+- **Repositorio Oficial en GitHub:** [https://github.com/maykelcb/DispenSave](https://github.com/maykelcb/DispenSave)
+- **Líder Técnico e Integrador:** Maykel Bernaola (`maykelcb`)
+- **Estructura del Equipo:** 4 Integrantes con roles diferenciados, ramas dedicadas en Git y secciones específicas del documento.
 
 ---
 
-## MAPEO DETALLADO POR INTEGRANTE Y RAMA
+## 1. TABLA MAESTRA DE ASIGNACIÓN (ROLES, GITHUB Y SECCIONES)
 
-### 1. MAYKEL BERNAOLA — Rama: `main`
-- **Rol:** Líder Técnico e Integrador de Arquitectura (Parte 1).
-- **Código en Android Studio:**
-  - Arquitectura MVVM + Clean Architecture en Jetpack Compose.
-  - Contenedor principal con barra de navegación dinámica por roles (`AppNavigation.kt`).
-  - Módulos de autenticación: `OnboardingScreen`, `LoginScreen`, `RegisterScreen`.
-  - Catálogo propio de comercios, publicación de ofertas (Packs e Individuales) y validaciones estrictas (`ValidationUtils.kt`).
-- **Capítulos del Informe Escrito:**
-  - **4.1 Arquitectura de la aplicación:** Descripción MVVM, diagrama UDF sin cruce de textos, componentes de capas y justificación técnica.
-  - **5.1 Historias de Usuario:** HU01 (Registro con rol), HU02 (Navegación contextual), HU03 (Catálogo propio), HU04 (Publicación de ofertas con validación).
-  - **5.2 Sprint 1:** Sprint Goal, tablero Kanban inicial y actividades ejecutadas.
-  - **VI.1 Evidencias:** Árbol de paquetes `com.example.dispensave`, evidencia de compilación `BUILD SUCCESSFUL` y capturas de pantalla de la app.
+| Integrante / Asignación | Rol en el Proyecto | Rama Oficial en GitHub | Secciones Asignadas del Informe | Módulos de Código y Responsabilidad Técnica | Guía Detallada en Repo |
+| :---: | :--- | :---: | :--- | :--- | :---: |
+| **PARTE 1**<br>**Maykel Bernaola**<br>(`maykelcb`) | **Líder Técnico & Arquitecto de Software** | `main` | **1. Resumen Ejecutivo**<br>• 1.1 Descripción actual del proyecto<br>• 1.2 Objetivos alcanzados<br>• 1.3 Estado de desarrollo<br><br>**2. Arquitectura Actualizada del Sistema**<br>• 2.1 Arquitectura general (diagrama + componentes)<br>• 2.2 Arquitectura MVVM (evidencias de separación UI, ViewModel, Repository, Data Sources) | • Arquitectura base MVVM + Jetpack Compose<br>• Grafo de navegación central (`AppNavigation.kt`)<br>• Contenedor con barra dinámica (`ContenedorPrincipal.kt`)<br>• ViewModel central (`PantryViewModel.kt`)<br>• Autenticación y roles (`RegisterScreen`, `LoginScreen`)<br>• Integración y revisión de Pull Requests en `main` | [docs/documento_parte1_dispensave.md](documento_parte1_dispensave.md) |
+| **PARTE 2**<br>**Persona 2**<br>*(Rubén / Servicios Web)* | **Desarrollador de Conectividad Web & Seguridad** | `feature/retrofit-api-consumption` | **3. Tecnología para el Consumo de Servicios Web**<br>• 3.1 Diseño de la API (Endpoints, HTTP GET, JSON DTOs)<br>• 3.2 Consumo de servicios (RetrofitClient, respuestas, errores)<br><br>**7. Privacidad y Seguridad**<br>• 7.1 Protección de datos almacenados y en tránsito<br>• 7.2 Seguridad de la app (validaciones `ValidationUtils`, permisos `INTERNET`, sanitización) | • Configuración Retrofit 2 + OkHttp + Gson<br>• Endpoint OpenFoodFacts (`FoodApiService.kt`)<br>• Modelos de transferencia DTO (`OpenFoodFactsDto.kt`)<br>• Búsqueda online (`ProductSearchScreen.kt`)<br>• Validaciones estrictas (`ValidationUtils.kt`)<br>• Permisos de red en `AndroidManifest.xml` | [docs/parte2_ruben.md](parte2_ruben.md) |
+| **PARTE 3**<br>**Persona 3**<br>*(Luis / Persistencia)* | **Desarrollador Backend Local & Geolocalización** | `feature/room-crud-pantry` | **4. Implementación de Operaciones CRUD**<br>• 4.1 Create, Read, Update, Delete con Room/SQLite<br>• 4.2 Evidencias funcionales y casos de prueba<br>• 4.3 Gestión de estados (Loading, Success, Error)<br><br>**6. Geolocalización (Opcional / Rescate)**<br>• 6.1 Implementación Google Maps API<br>• 6.2 Ubicación, mapa, marcadores de comercios, permisos<br>• 6.3 Evidencias y pruebas de geolocalización | • Base de datos Room SQLite (`AppDatabase.kt`)<br>• Entidad y DAO (`ProductEntity.kt`, `ProductDao.kt`)<br>• Repositorio reactivo (`PantryRepository.kt`)<br>• Pantalla de detalle y edición (`ProductDetailScreen.kt`)<br>• Formulario modal (`AddProductDialog.kt`)<br>• Módulo de ubicación de aliados (`ExploreScreen.kt`) | [docs/parte3_luis.md](parte3_luis.md) |
+| **PARTE 4**<br>**Persona 4**<br>*(Anderson Abanto / Andy)* | **Desarrollador UX, Sostenibilidad ODS 12 & QA** | `feature/shopping-list-alerts` | **8. Impacto Social y ODS 12**<br>• 8.1 Uso responsable de la información y rescate<br>• 8.2 Consumo responsable de recursos técnicos (optimización Room, red, desarrollo sostenible)<br><br>**9. Resultados Obtenidos**<br>• Funcionalidades completadas (evidencias)<br>• Funcionalidades pendientes (roadmap fase 2)<br>• Lecciones aprendidas (retos y soluciones)<br><br>**10. Anexos**<br>• Capturas adicionales, pruebas, links a Repo y Tablero | • Módulo de Lista de Compras (`ShoppingListScreen.kt`)<br>• Traslado automatizado a despensa SQLite<br>• Alertas semafóricas visuales (`ExpirationBadge.kt`)<br>• Diálogo modal confirmación (`ConfirmDeleteDialog.kt`)<br>• Métricas de ahorro y CO₂ (`ImpactScreen.kt`)<br>• Consolidación de evidencias visuales y tablero Kanban | [docs/parte4_andy.md](parte4_andy.md) |
 
 ---
 
-### 2. RUBÉN — Rama: `feature/retrofit-api-consumption`
-- **Rol:** Desarrollador APIs & Consumo de Servicios Web (Parte 2).
-- **Código en Android Studio:**
-  - Integración obligatoria por rúbrica: *Consumo de al menos un servicio REST o API*.
-  - Configuración de **Retrofit + OkHttp** y converter Gson/Moshi.
-  - Modelos de red (DTO) y consumo de API externa de catálogo/alimentos (ej. búsqueda de información nutricional, alérgenos o catálogo externo).
-  - Manejo de estados de red: carga (`Loading`), éxito (`Success`) y error (`Error`) con retry.
-- **Capítulos del Informe Escrito:**
-  - **4.2 Tecnologías utilizadas:** Detalle técnico de Retrofit, OkHttp, manejo asíncrono con Coroutines/Flow y arquitectura de red.
-  - **5.1 Historias de Usuario:** HU05 a HU08 (Búsqueda remota de productos, catálogo API, validación de conectividad y cache temporal).
-  - **5.2 Sprint 2:** Sprint Goal de integración de API REST y actividades.
-  - **VI.2 Evidencias:** Fragmentos de interfaces Retrofit (`@GET`), llamadas HTTP exitosas (código 200) y capturas del consumo de API.
+## 2. FLUJO DE TRABAJO EN GITHUB (GIT FLOW)
 
----
-
-### 3. LUIS — Rama: `feature/room-crud-pantry`
-- **Rol:** Desarrollador Backend Local & Persistencia SQLite (Parte 3).
-- **Código en Android Studio:**
-  - Reemplazo de datos en memoria por persistencia SQLite nativa mediante **Room Database**.
-  - Entidades y DAOs: `AppDatabase.kt`, `ProductEntity.kt`, `ProductDao.kt`.
-  - Operaciones CRUD completas (Crear alimento, Listar ordenado por vencimiento, Actualizar cantidad/unidad, Eliminar).
-- **Capítulos del Informe Escrito:**
-  - **4.3 Diseño de base de datos:** Modelo Entidad-Relación (ER), Diccionario de datos formal de todas las tablas y justificación de SQLite/Room.
-  - **5.1 Historias de Usuario:** HU09 a HU12 (Persistencia local permanente, orden cronológico de caducidad, edición y borrado de stock).
-  - **5.2 Sprint 3:** Sprint Goal de persistencia y base de datos local.
-  - **VI.3 Evidencias:** Clases `@Dao`, estructura `@Database` y capturas de persistencia de datos tras cerrar y reabrir la app.
-
----
-
-### 4. ANDERSON ABANTO — Rama: `feature/shopping-list-alerts`
-- **Rol:** Desarrollador UI/UX & Lista de Compras (Parte 4).
-- **Código en Android Studio (Ya implementado por Anderson):**
-  - Módulo de Lista de Compras: `ShoppingListScreen.kt` con checkboxes animados y filtros.
-  - Traslado automático a despensa: `ShoppingItem.kt` y método `toggleShoppingItemPurchased()` en `PantryViewModel.kt`.
-  - Semáforo visual de caducidad: `ExpirationBadge.kt` (🟢 Vigente >7d, 🟡 Por vencer ≤3d, 🔴 Vencido).
-  - Prevención de errores destructivos: `ConfirmDeleteDialog.kt` (Modal Material 3 antes de eliminar).
-- **Capítulos del Informe Escrito:**
-  - **4.4 Diseño de interfaces:** Wireflow completo del flujo de compras a despensa y evaluación de Heurísticas de Usabilidad de Nielsen.
-  - **5.1 Historias de Usuario:** HU13 a HU16 (o HU10 a HU12 en su documento: Lista interactiva, traslado automatizado, alertas semafóricas y confirmación modal).
-  - **5.2 Sprint 4:** Sprint Goal de experiencia de usuario y alertas preventivas.
-  - **VI.4 Evidencias:** Capturas de la lista de compras, del diálogo de confirmación y badges semafóricos.
-  - Documentación técnica lista en: [docs/parte4_shopping_alerts.md](parte4_shopping_alerts.md).
-
----
-
-## CÓMO TRABAJAR EN GIT CON LAS RAMAS OFICIALES
-
-Para ubicarse en la rama correcta en Android Studio o por terminal:
+Para trabajar de manera ordenada en Android Studio o por terminal de comandos:
 
 ```bash
 # 1. Clonar el repositorio
 git clone https://github.com/maykelcb/DispenSave.git
 cd DispenSave
 
-# 2. Cada integrante cambia a su rama asignada:
-# Maykel (Líder Técnico):
+# 2. Maykel (Líder Técnico & Integrador):
 git checkout main
+git pull origin main
 
-# Anderson (Andy - UX & Compras):
-git checkout feature/shopping-list-alerts
-
-# Luis (Backend Local & Room):
-git checkout feature/room-crud-pantry
-
-# Rubén (APIs & Retrofit):
+# 3. Persona 2 (Servicios Web & Seguridad):
 git checkout feature/retrofit-api-consumption
+git pull origin feature/retrofit-api-consumption
+
+# 4. Persona 3 (Room CRUD & Geolocalización):
+git checkout feature/room-crud-pantry
+git pull origin feature/room-crud-pantry
+
+# 5. Persona 4 (UX Compras, ODS 12 & Resultados):
+git checkout feature/shopping-list-alerts
+git pull origin feature/shopping-list-alerts
 ```
+
+---
+
+## 3. CHECKLIST DE CUMPLIMIENTO POR INTEGRANTE
+
+### Parte 1 — Maykel Bernaola (`main`)
+- [x] Redactar **Sección 1: Resumen Ejecutivo** completo (descripción, objetivos alcanzados y estado de desarrollo).
+- [x] Redactar **Sección 2: Arquitectura Actualizada del Sistema** (diagrama integral y componentes).
+- [x] Documentar con código fuente la **Arquitectura MVVM**: separación de UI (Compose), ViewModel (`PantryViewModel`), Repository (`PantryRepository`) y Data Sources (Room y Retrofit).
+- [x] Coordinar la integración general y validar la compilación exitosa (`BUILD SUCCESSFUL`).
+
+### Parte 2 — Persona 2 (`feature/retrofit-api-consumption`)
+- [ ] Redactar **Sección 3: Tecnología para el Consumo de Servicios Web** con Retrofit 2 + OkHttp.
+- [ ] Detallar diseño de API: Endpoint `cgi/search.pl`, parámetros HTTP GET y modelos DTO JSON (`OpenFoodFactsResponseDto`).
+- [ ] Explicar configuración de `RetrofitClient`, parseo Gson, timeouts y manejo de errores/reintentos.
+- [ ] Redactar **Sección 7: Privacidad y Seguridad** (protección de datos locales en SQLite, validaciones de `ValidationUtils.kt`, permisos de Android y buenas prácticas de seguridad).
+
+### Parte 3 — Persona 3 (`feature/room-crud-pantry`)
+- [ ] Redactar **Sección 4: Implementación de Operaciones CRUD** completas con Room Persistence Library.
+- [ ] Documentar Create (`@Insert`), Read (`@Query` reactivo con Flow), Update (`@Update`) y Delete (`@Delete`).
+- [ ] Elaborar la matriz de casos de prueba unitarios/funcionales y capturas de persistencia.
+- [ ] Explicar la gestión de estados: Loading, Success y Error en la base de datos local.
+- [ ] Redactar **Sección 6 (Opcional): Geolocalización** con Google Maps, obtención de coordenadas, marcadores de tiendas de rescate y permisos de ubicación.
+
+### Parte 4 — Persona 4 (`feature/shopping-list-alerts`)
+- [ ] Redactar **Sección 8: Impacto Social y ODS 12** (Uso responsable de la información, rescate de excedentes, cálculo de CO₂ evitado).
+- [ ] Documentar el consumo responsable de recursos tecnológicos: optimización de queries SQL, minimización de llamadas de red y arquitectura sostenible.
+- [ ] Redactar **Sección 9: Resultados Obtenidos** (Módulos completados, funcionalidades pendientes para fase 2, lecciones aprendidas con retos y soluciones).
+- [ ] Consolidar la **Sección 10: Anexos** (Álbum de capturas, evidencias de pruebas, enlace al repositorio GitHub y enlace al tablero de trabajo Jira/Trello).
