@@ -131,7 +131,11 @@ A continuación se ilustra la arquitectura general del sistema móvil DispenSave
 
 ### 2.2 Arquitectura MVVM (Evidencia de Separación de Capas)
 
-DispenSave implementa de manera estricta la separación de responsabilidades:
+DispenSave implementa de manera estricta la separación de responsabilidades con un Flujo Unidireccional de Datos (UDF):
+
+![Diagrama de Arquitectura MVVM y Flujo Unidireccional de Datos (UDF)](imagenes/diagrama_mvvm_renderizado.png)
+
+*Figura 2.1: Diagrama oficial de arquitectura MVVM y separación de capas en DispenSave.*
 
 #### 1. Capa de UI (Jetpack Compose)
 La vista no ejecuta lógica de negocio ni interactúa con la base de datos de manera directa; se limita a renderizar el estado observado y emitir eventos de usuario:

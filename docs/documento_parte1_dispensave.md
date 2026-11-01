@@ -177,25 +177,9 @@ El ecosistema de DispenSave se articula a través de siete módulos de software 
 
 La arquitectura de DispenSave implementa de manera rigurosa la separación de responsabilidades exigida por las buenas prácticas de la industria, garantizando que ninguna capa asuma tareas ajenas a su ámbito:
 
-```
-┌──────────────┐         Eventos de UI           ┌──────────────────┐
-│  VISTA (UI)  ├────────────────────────────────►│    VIEWMODEL     │
-│ Jetpack Comp.│◄────────────────────────────────┤ (PantryViewModel)│
-└──────────────┘    Emite StateFlow / States     └────────┬─────────┘
-                                                          │ Invoca
-                                                          ▼
-                                                 ┌──────────────────┐
-                                                 │   REPOSITORIO    │
-                                                 │ (PantryRepository│
-                                                 └────────┬─────────┘
-                                                          │
-                                ┌─────────────────────────┴─────────────────────────┐
-                                ▼                                                   ▼
-                     ┌─────────────────────┐                             ┌─────────────────────┐
-                     │  DATA SOURCE LOCAL  │                             │ DATA SOURCE REMOTO  │
-                     │   (Room Database)   │                             │  (Retrofit API REST)│
-                     └─────────────────────┘                             └─────────────────────┘
-```
+![Diagrama de Arquitectura MVVM y Flujo Unidireccional de Datos (UDF)](imagenes/diagrama_mvvm_renderizado.png)
+
+*Figura 2.1: Diagrama oficial de arquitectura MVVM y separación de capas en DispenSave, mostrando el flujo unidireccional de datos (UDF) entre la Vista (Jetpack Compose), el ViewModel (StateFlow), los Repositorios y las Fuentes de Datos (Room SQLite y Retrofit 2 REST).*
 
 A continuación se demuestra la evidencia técnica de separación para cada una de las 4 capas del patrón:
 
