@@ -1,5 +1,14 @@
-# 📋 PLAN MAESTRO DE DISTRIBUCIÓN COLABORATIVA DEL PROYECTO DISPENSAVE
-## Asignación Equitativa en 4 Partes (GitHub + Informe Académico Oficial)
+# 📋 PLAN MAESTRO DE DISTRIBUCIÓN COLABORATIVA — EVALUACIÓN FINAL
+## Proyecto DispenSave — Aplicación Móvil Funcional e Informe Final
+
+---
+
+> [!CAUTION]
+> ### ⚠️ REGLA ESTRICTA DE ENTREGABLES (Penalización de -2 puntos por cada caso):
+> Los archivos finales que se suben al aula virtual deben nombrarse **EXACTAMENTE** así:
+> 1. `PC_informe.pdf` *(Informe técnico consolidado en PDF)*
+> 2. `PC_proyecto.zip` *(Proyecto de Android Studio comprimido en ZIP)*
+> 3. `PC_app.aab` *(Android App Bundle firmado para Google Play)*
 
 ---
 
@@ -7,72 +16,69 @@
 - **Proyecto:** DispenSave — Plataforma Inteligente de Rescate de Alimentos y Gestión de Despensa
 - **Repositorio Oficial en GitHub:** [https://github.com/maykelcb/DispenSave](https://github.com/maykelcb/DispenSave)
 - **Líder Técnico e Integrador:** Maykel Bernaola (`maykelcb`)
-- **Estructura del Equipo:** 4 Integrantes con roles diferenciados, ramas dedicadas en Git y secciones específicas del documento.
+- **Estructura del Equipo:** 4 Integrantes con roles equitativos, ramas dedicadas y secciones asignadas según la rúbrica oficial de 12 puntos.
 
 ---
 
 ## 1. TABLA MAESTRA DE ASIGNACIÓN (ROLES, GITHUB Y SECCIONES)
 
-| Integrante / Asignación | Rol en el Proyecto | Rama Oficial en GitHub | Secciones Asignadas del Informe | Módulos de Código y Responsabilidad Técnica | Guía Detallada en Repo |
-| :---: | :--- | :---: | :--- | :--- | :---: |
-| **PARTE 1**<br>**Maykel Bernaola**<br>(`maykelcb`) | **Líder Técnico & Arquitecto de Software** | `main` | **1. Resumen Ejecutivo**<br>• 1.1 Descripción actual del proyecto<br>• 1.2 Objetivos alcanzados<br>• 1.3 Estado de desarrollo<br><br>**2. Arquitectura Actualizada del Sistema**<br>• 2.1 Arquitectura general (diagrama + componentes)<br>• 2.2 Arquitectura MVVM (evidencias de separación UI, ViewModel, Repository, Data Sources) | • Arquitectura base MVVM + Jetpack Compose<br>• Grafo de navegación central (`AppNavigation.kt`)<br>• Contenedor con barra dinámica (`ContenedorPrincipal.kt`)<br>• ViewModel central (`PantryViewModel.kt`)<br>• Autenticación y roles (`RegisterScreen`, `LoginScreen`)<br>• Integración y revisión de Pull Requests en `main` | [docs/documento_parte1_dispensave.md](documento_parte1_dispensave.md) |
-| **PARTE 2**<br>**Persona 2**<br>*(Rubén / Servicios Web)* | **Desarrollador de Conectividad Web & Seguridad** | `feature/retrofit-api-consumption` | **3. Tecnología para el Consumo de Servicios Web**<br>• 3.1 Diseño de la API (Endpoints, HTTP GET, JSON DTOs)<br>• 3.2 Consumo de servicios (RetrofitClient, respuestas, errores)<br><br>**7. Privacidad y Seguridad**<br>• 7.1 Protección de datos almacenados y en tránsito<br>• 7.2 Seguridad de la app (validaciones `ValidationUtils`, permisos `INTERNET`, sanitización) | • Configuración Retrofit 2 + OkHttp + Gson<br>• Endpoint OpenFoodFacts (`FoodApiService.kt`)<br>• Modelos de transferencia DTO (`OpenFoodFactsDto.kt`)<br>• Búsqueda online (`ProductSearchScreen.kt`)<br>• Validaciones estrictas (`ValidationUtils.kt`)<br>• Permisos de red en `AndroidManifest.xml` | [docs/parte2_ruben.md](parte2_ruben.md) |
-| **PARTE 3**<br>**Persona 3**<br>*(Luis / Persistencia)* | **Desarrollador Backend Local & Geolocalización** | `feature/room-crud-pantry` | **4. Implementación de Operaciones CRUD**<br>• 4.1 Create, Read, Update, Delete con Room/SQLite<br>• 4.2 Evidencias funcionales y casos de prueba<br>• 4.3 Gestión de estados (Loading, Success, Error)<br><br>**6. Geolocalización (Opcional / Rescate)**<br>• 6.1 Implementación Google Maps API<br>• 6.2 Ubicación, mapa, marcadores de comercios, permisos<br>• 6.3 Evidencias y pruebas de geolocalización | • Base de datos Room SQLite (`AppDatabase.kt`)<br>• Entidad y DAO (`ProductEntity.kt`, `ProductDao.kt`)<br>• Repositorio reactivo (`PantryRepository.kt`)<br>• Pantalla de detalle y edición (`ProductDetailScreen.kt`)<br>• Formulario modal (`AddProductDialog.kt`)<br>• Módulo de ubicación de aliados (`ExploreScreen.kt`) | [docs/parte3_luis.md](parte3_luis.md) |
-| **PARTE 4**<br>**Persona 4**<br>*(Anderson Abanto / Andy)* | **Desarrollador UX, Sostenibilidad ODS 12 & QA** | `feature/shopping-list-alerts` | **8. Impacto Social y ODS 12**<br>• 8.1 Uso responsable de la información y rescate<br>• 8.2 Consumo responsable de recursos técnicos (optimización Room, red, desarrollo sostenible)<br><br>**9. Resultados Obtenidos**<br>• Funcionalidades completadas (evidencias)<br>• Funcionalidades pendientes (roadmap fase 2)<br>• Lecciones aprendidas (retos y soluciones)<br><br>**10. Anexos**<br>• Capturas adicionales, pruebas, links a Repo y Tablero | • Módulo de Lista de Compras (`ShoppingListScreen.kt`)<br>• Traslado automatizado a despensa SQLite<br>• Alertas semafóricas visuales (`ExpirationBadge.kt`)<br>• Diálogo modal confirmación (`ConfirmDeleteDialog.kt`)<br>• Métricas de ahorro y CO₂ (`ImpactScreen.kt`)<br>• Consolidación de evidencias visuales y tablero Kanban | [docs/parte4_andy.md](parte4_andy.md) |
+| Parte | Integrante Asignado | Rol Oficial | Rama Oficial de Git | Secciones Asignadas del Informe Oficial | Módulos Técnicos y Entregables | Archivo de Trabajo |
+|:---:|:---|:---|:---:|:---|:---|:---:|
+| **PARTE 1** | **Maykel Bernaola** (`maykelcb`) | **Líder Técnico & Arquitecto de Software** | `main` | **Portada Oficial**<br>**1. Resumen ejecutivo**<br>• Descripción del proyecto<br>• Problema abordado<br>• Solución desarrollada<br>• Resultados obtenidos<br>**2. Definición del proyecto**<br>• Contexto y problemática<br>• Objetivos generales y específicos<br>• Alcance final<br>• Usuarios objetivo (Consumidor vs Comercio)<br>**4. Arquitectura de software**<br>• Arquitectura MVVM con UDF<br>• Componentes implementados<br>• Diagrama oficial de arquitectura (Draw.io / PNG)<br>**Sustentación:** Coordinación y guion de demo en vivo (10-15 min). | • Arquitectura base y navegación<br>• Integración de ramas a `main`<br>• Generación de `PC_app.aab`<br>• Empaquetado de `PC_proyecto.zip`<br>• Consolidación de `PC_informe.pdf` | [docs/documento_parte1_dispensave.md](documento_parte1_dispensave.md) |
+| **PARTE 2** | **Integrante 2** *(Rubén / APIs)* | **Desarrollador de Análisis, Diseño y Servicios Web** | `feature/retrofit-api-consumption` | **3. Análisis y diseño**<br>• Historias de usuario (HU01-HU16 formato Gherkin)<br>• Requerimientos funcionales (RF01-RF12)<br>• Requerimientos no funcionales (RNF01-RNF06)<br>• Reglas de negocio (RN01-RN05)<br>**5. Implementación técnica**<br>• Persistencia local (Room SQLite nativo)<br>• Servicios REST (Retrofit 2 + OpenFoodFacts)<br>• Firebase (Justificación técnica Offline-First)<br>• Geolocalización (Google Maps API y tiendas) | • `FoodApiService.kt`<br>• `RetrofitClient.kt`<br>• `OpenFoodFactsDto.kt`<br>• `ProductSearchScreen.kt`<br>• Especificación formal de requisitos de software | [docs/parte2_ruben.md](parte2_ruben.md) |
+| **PARTE 3** | **Integrante 3** *(Luis / Persistencia)* | **Desarrollador de Persistencia, Pruebas y Calidad** | `feature/room-crud-pantry` | **6. Evidencias funcionales**<br>• Capturas de principales pantallas<br>• Evidencias de funcionalidades implementadas<br>• Evidencias de operaciones CRUD completas<br>**7. Pruebas realizadas**<br>• Pruebas funcionales (Casos de Prueba CP01-CP08)<br>• Correcciones realizadas (Problemas y Soluciones)<br>**8. Calidad y optimización**<br>• Mejoras de rendimiento (Recomposición Compose)<br>• Optimización de recursos (Consultas Room, Red)<br>• Buenas prácticas aplicadas (SOLID, Clean Arch)<br>• Consideraciones de accesibilidad (Contraste, 48dp) | • `AppDatabase.kt`<br>• `ProductDao.kt`<br>• `ProductEntity.kt`<br>• `PantryRepository.kt`<br>• Matriz de Casos de Prueba<br>• Auditoría de Rendimiento y Accesibilidad | [docs/parte3_luis.md](parte3_luis.md) |
+| **PARTE 4** | **Integrante 4** *(Anderson Abanto / Andy)* | **Desarrollador de Publicación, UX y Sostenibilidad** | `feature/shopping-list-alerts` | **9. Preparación para publicación**<br>• Firma digital y Android App Bundle (`PC_app.aab`)<br>• Ícono de app y capturas promocionales<br>• Política de privacidad y Ficha de tienda Play Store<br>• Notas de versión v1.0.0<br>**10. Impacto social y ODS 12**<br>• Contribución ODS 12.3, Recursos y Ética<br>**11. Conclusiones y recomendaciones**<br>**12. Anexos**<br>• Enlace al repositorio GitHub<br>• **Manual de usuario breve** (guía paso a paso ilustrada)<br>• Evidencias complementarias | • `ShoppingListScreen.kt`<br>• `ExpirationBadge.kt`<br>• `ImpactScreen.kt`<br>• Ficha de Play Store<br>• Política de Privacidad Oficial<br>• Manual de Usuario Ilustrado | [docs/parte4_andy.md](parte4_andy.md) |
 
 ---
 
-## 2. FLUJO DE TRABAJO EN GITHUB (GIT FLOW)
+## 2. GUÍA DE TRABAJO EN GITHUB POR INTEGRANTE
 
-Para trabajar de manera ordenada en Android Studio o por terminal de comandos:
+Para trabajar de manera colaborativa y ordenada:
 
 ```bash
-# 1. Clonar el repositorio
+# 1. Clonar o actualizar el repositorio
 git clone https://github.com/maykelcb/DispenSave.git
 cd DispenSave
 
-# 2. Maykel (Líder Técnico & Integrador):
+# PARTE 1 — Maykel Bernaola (Líder Técnico & Integrador):
 git checkout main
 git pull origin main
 
-# 3. Persona 2 (Servicios Web & Seguridad):
+# PARTE 2 — Integrante 2 (Análisis, Diseño & APIs):
 git checkout feature/retrofit-api-consumption
 git pull origin feature/retrofit-api-consumption
 
-# 4. Persona 3 (Room CRUD & Geolocalización):
+# PARTE 3 — Integrante 3 (Persistencia, Pruebas & Calidad):
 git checkout feature/room-crud-pantry
 git pull origin feature/room-crud-pantry
 
-# 5. Persona 4 (UX Compras, ODS 12 & Resultados):
+# PARTE 4 — Integrante 4 (Publicación, ODS 12 & Manual de Usuario):
 git checkout feature/shopping-list-alerts
 git pull origin feature/shopping-list-alerts
 ```
 
 ---
 
-## 3. CHECKLIST DE CUMPLIMIENTO POR INTEGRANTE
+## 3. CHECKLIST DE ENTREGABLES PARA CADA INTEGRANTE
 
 ### Parte 1 — Maykel Bernaola (`main`)
-- [x] Redactar **Sección 1: Resumen Ejecutivo** completo (descripción, objetivos alcanzados y estado de desarrollo).
-- [x] Redactar **Sección 2: Arquitectura Actualizada del Sistema** (diagrama integral y componentes).
-- [x] Documentar con código fuente la **Arquitectura MVVM**: separación de UI (Compose), ViewModel (`PantryViewModel`), Repository (`PantryRepository`) y Data Sources (Room y Retrofit).
-- [x] Coordinar la integración general y validar la compilación exitosa (`BUILD SUCCESSFUL`).
+- [x] Portada formal con datos de la universidad, asignatura, proyecto e integrantes.
+- [x] **Sección 1: Resumen ejecutivo** (Problema, Solución y Resultados).
+- [x] **Sección 2: Definición del proyecto** (Contexto, Objetivos, Alcance y Usuarios objetivo).
+- [x] **Sección 4: Arquitectura de software** (MVVM con UDF, Componentes y Diagrama Draw.io/PNG).
+- [ ] Validar la compilación del bundle `PC_app.aab` y el comprimido `PC_proyecto.zip`.
 
-### Parte 2 — Persona 2 (`feature/retrofit-api-consumption`)
-- [ ] Redactar **Sección 3: Tecnología para el Consumo de Servicios Web** con Retrofit 2 + OkHttp.
-- [ ] Detallar diseño de API: Endpoint `cgi/search.pl`, parámetros HTTP GET y modelos DTO JSON (`OpenFoodFactsResponseDto`).
-- [ ] Explicar configuración de `RetrofitClient`, parseo Gson, timeouts y manejo de errores/reintentos.
-- [ ] Redactar **Sección 7: Privacidad y Seguridad** (protección de datos locales en SQLite, validaciones de `ValidationUtils.kt`, permisos de Android y buenas prácticas de seguridad).
+### Parte 2 — Integrante 2 (`feature/retrofit-api-consumption`)
+- [x] **Sección 3: Análisis y diseño** (Historias de usuario HU01-HU16 Gherkin, Requerimientos Funcionales RF01-RF12, Requerimientos No Funcionales RNF01-RNF06 y Reglas de Negocio RN01-RN05).
+- [x] **Sección 5: Implementación técnica** (Room SQLite, Retrofit 2 + OpenFoodFacts REST, justificación técnica frente a Firebase y Google Maps).
 
-### Parte 3 — Persona 3 (`feature/room-crud-pantry`)
-- [ ] Redactar **Sección 4: Implementación de Operaciones CRUD** completas con Room Persistence Library.
-- [ ] Documentar Create (`@Insert`), Read (`@Query` reactivo con Flow), Update (`@Update`) y Delete (`@Delete`).
-- [ ] Elaborar la matriz de casos de prueba unitarios/funcionales y capturas de persistencia.
-- [ ] Explicar la gestión de estados: Loading, Success y Error en la base de datos local.
-- [ ] Redactar **Sección 6 (Opcional): Geolocalización** con Google Maps, obtención de coordenadas, marcadores de tiendas de rescate y permisos de ubicación.
+### Parte 3 — Integrante 3 (`feature/room-crud-pantry`)
+- [x] **Sección 6: Evidencias funcionales** (Capturas de pantallas principales, operaciones CRUD demostradas y semáforo visual).
+- [x] **Sección 7: Pruebas realizadas** (Matriz de Casos de Prueba CP01-CP08 y tabla de problemas/soluciones).
+- [x] **Sección 8: Calidad y optimización** (Smart Recomposition, optimización de SQLite, Clean Architecture y Accesibilidad Material 3).
 
-### Parte 4 — Persona 4 (`feature/shopping-list-alerts`)
-- [ ] Redactar **Sección 8: Impacto Social y ODS 12** (Uso responsable de la información, rescate de excedentes, cálculo de CO₂ evitado).
-- [ ] Documentar el consumo responsable de recursos tecnológicos: optimización de queries SQL, minimización de llamadas de red y arquitectura sostenible.
-- [ ] Redactar **Sección 9: Resultados Obtenidos** (Módulos completados, funcionalidades pendientes para fase 2, lecciones aprendidas con retos y soluciones).
-- [ ] Consolidar la **Sección 10: Anexos** (Álbum de capturas, evidencias de pruebas, enlace al repositorio GitHub y enlace al tablero de trabajo Jira/Trello).
+### Parte 4 — Integrante 4 (`feature/shopping-list-alerts`)
+- [x] **Sección 9: Preparación para publicación** (Firma digital, Android App Bundle `PC_app.aab`, Ficha de tienda Google Play Store, Política de privacidad y Release Notes).
+- [x] **Sección 10: Impacto social y ODS 12** (Contribución directa al ODS 12.3, cálculo de CO₂ en `ImpactScreen`, ética y consumo responsable).
+- [x] **Sección 11: Conclusiones y recomendaciones** (Conclusiones de ingeniería de software y recomendaciones de evolución).
+- [x] **Sección 12: Anexos** (Enlace al repositorio GitHub, **Manual de Usuario Breve** con flujo paso a paso y evidencias complementarias).
