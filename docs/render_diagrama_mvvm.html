@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Diagrama Arquitectura MVVM DispenSave</title>
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  body {
+    background: #FFFFFF;
+    padding: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .canvas {
+    width: 1040px;
+    background: #FFFFFF;
+    border: 1px solid #D0D7DE;
+    border-radius: 12px;
+    padding: 28px 32px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  }
+  .header {
+    text-align: center;
+    margin-bottom: 24px;
+    border-bottom: 2px solid #E1E4E8;
+    padding-bottom: 14px;
+  }
+  .header h1 {
+    font-size: 22px;
+    color: #1A1F36;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+  .header p {
+    font-size: 13px;
+    color: #586069;
+    margin-top: 4px;
+  }
+
+  .layers-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+  }
+
+  /* Layer Box */
+  .layer {
+    border-radius: 10px;
+    border: 1.5px solid;
+    padding: 16px 20px;
+    position: relative;
+    transition: all 0.2s ease;
+  }
+  .layer-title-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .layer-name {
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .layer-tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+    letter-spacing: 0.2px;
+  }
+
+  .components-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .components-grid.three-cols {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .components-grid.two-cols {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .comp-card {
+    background: #FFFFFF;
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.1);
+    padding: 10px 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .comp-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #24292E;
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .comp-desc {
+    font-size: 11px;
+    color: #586069;
+    line-height: 1.35;
+  }
+  .code-pill {
+    display: inline-block;
+    background: #F1F3F5;
+    color: #D6336C;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 4px;
+    margin-top: 4px;
+    font-weight: 600;
+  }
+
+  /* Layer 1: UI */
+  .layer-ui {
+    background: #F4F8FD;
+    border-color: #B2D4F5;
+  }
+  .layer-ui .layer-name { color: #0969DA; }
+  .layer-ui .layer-tag { background: #DDF4FF; color: #0969DA; border: 1px solid #B2D4F5; }
+
+  /* Layer 2: ViewModel */
+  .layer-vm {
+    background: #FFF9F2;
+    border-color: #F8D3B4;
+  }
+  .layer-vm .layer-name { color: #BF4B00; }
+  .layer-vm .layer-tag { background: #FFE8D6; color: #BF4B00; border: 1px solid #F8D3B4; }
+
+  /* Layer 3: Repositories */
+  .layer-repo {
+    background: #F2FAF5;
+    border-color: #A7E0BA;
+  }
+  .layer-repo .layer-name { color: #1A7F37; }
+  .layer-repo .layer-tag { background: #DCFCE7; color: #1A7F37; border: 1px solid #A7E0BA; }
+
+  /* Layer 4: Data Sources */
+  .layer-sources {
+    background: #FAF8FE;
+    border-color: #D3C3EE;
+  }
+  .layer-sources .layer-name { color: #6E3FBE; }
+  .layer-sources .layer-tag { background: #F2EAFA; color: #6E3FBE; border: 1px solid #D3C3EE; }
+
+  /* Flow Connectors */
+  .flow-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 16px;
+    background: #F6F8FA;
+    border: 1px dashed #D0D7DE;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .flow-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .flow-item.down { color: #1A7F37; }
+  .flow-item.up { color: #0969DA; }
+
+  .footer-legend {
+    margin-top: 18px;
+    padding-top: 12px;
+    border-top: 1px solid #E1E4E8;
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #6A737D;
+  }
+  .legend-items {
+    display: flex;
+    gap: 16px;
+  }
+  .legend-pill {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .dot.blue { background: #0969DA; }
+  .dot.orange { background: #BF4B00; }
+  .dot.green { background: #1A7F37; }
+  .dot.purple { background: #6E3FBE; }
+</style>
+</head>
+<body>
+
+<div class="canvas">
+  <div class="header">
+    <h1>ARQUITECTURA MVVM Y FLUJO UNIDIRECCIONAL DE DATOS (UDF)</h1>
+    <p>Proyecto DispenSave • Modelo de Separación de Capas para Android Moderno con Jetpack Compose</p>
+  </div>
+
+  <div class="layers-container">
+
+    <!-- 1. CAPA DE PRESENTACIÓN (UI) -->
+    <div class="layer layer-ui">
+      <div class="layer-title-bar">
+        <div class="layer-name">
+          <span>🖥️ 1. Capa de Vista / Presentación</span>
+        </div>
+        <span class="layer-tag">Jetpack Compose UI • State Hoisting • Declarativa</span>
+      </div>
+      <div class="components-grid">
+        <div class="comp-card">
+          <div class="comp-title">PantryScreen</div>
+          <div class="comp-desc">Listado reactivo de despensa con badges semafóricos (FEFO).</div>
+          <span class="code-pill">LazyColumn • Observa StateFlow</span>
+        </div>
+        <div class="comp-card">
+          <div class="comp-title">AddProductDialog</div>
+          <div class="comp-desc">Formulario modal asistido con DatePicker y validaciones reactivas.</div>
+          <span class="code-pill">ValidationUtils • Evento onConfirm</span>
+        </div>
+        <div class="comp-card">
+          <div class="comp-title">ProductSearchScreen</div>
+          <div class="comp-desc">Búsqueda online con spinners y botón "Añadir a Despensa".</div>
+          <span class="code-pill">ProductSearchUiState</span>
+        </div>
+        <div class="comp-card">
+          <div class="comp-title">ShoppingListScreen</div>
+          <div class="comp-desc">Lista interactiva de compras con traslado masivo a Room SQLite.</div>
+          <span class="code-pill">Checkbox • Auto-traslado</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONECTOR 1: UI <-> VIEWMODEL -->
+    <div class="flow-banner">
+      <div class="flow-item up">
+        <span>▲ <strong>Eventos de Usuario:</strong> Clics, inputs en formularios, cambios de filtro, peticiones CRUD</span>
+      </div>
+      <div class="flow-item down">
+        <span>▼ <strong>Emisión de Estado:</strong> StateFlow observable activa Smart Recomposition instantánea</span>
+      </div>
+    </div>
+
+    <!-- 2. CAPA DE VIEWMODEL -->
+    <div class="layer layer-vm">
+      <div class="layer-title-bar">
+        <div class="layer-name">
+          <span>⚙️ 2. Capa de ViewModel (Lógica de Presentación)</span>
+        </div>
+        <span class="layer-tag">androidx.lifecycle.ViewModel • Coroutines • StateFlow</span>
+      </div>
+      <div class="components-grid three-cols">
+        <div class="comp-card">
+          <div class="comp-title">PantryViewModel.kt</div>
+          <div class="comp-desc">Controlador principal de ciclo de vida. Sobrevive a rotaciones y cambios de configuración.</div>
+          <span class="code-pill">viewModelScope (Dispatchers.IO)</span>
+        </div>
+        <div class="comp-card">
+          <div class="comp-title">Estados Reactivos UI</div>
+          <div class="comp-desc">Encapsulamiento estricto inmutable: solo el ViewModel modifica el estado interno.</div>
+          <span class="code-pill">val products: StateFlow&lt;List&gt;</span>
+        </div>
+        <div class="comp-card">
+          <div class="comp-title">Máquina de Estados de Red</div>
+          <div class="comp-desc">Controla los estados de la búsqueda remota sin congelar la pantalla.</div>
+          <span class="code-pill">Idle | Loading | Success | Error</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONECTOR 2: VIEWMODEL <-> REPOSITORIOS -->
+    <div class="flow-banner">
+      <div class="flow-item down">
+        <span>▼ <strong>Invocación Asíncrona:</strong> Métodos suspendidos (insert, update, delete, searchRemoteProducts)</span>
+      </div>
+      <div class="flow-item up">
+        <span>▲ <strong>Streams Reactivos:</strong> Flows de Dominio limpios (Product, SurplusBag, User) sin acoplamiento</span>
+      </div>
+    </div>
+
+    <!-- 3. CAPA DE REPOSITORIOS -->
+    <div class="layer layer-repo">
+      <div class="layer-title-bar">
+        <div class="layer-name">
+          <span>🏛️ 3. Capa de Repositorios (Single Source of Truth)</span>
+        </div>
+        <span class="layer-tag">Patrón Repository • Clean Architecture • Mapeadores</span>
+      </div>
+      <div class="components-grid three-cols">
+        <div class="comp-card">
+          <div class="comp-title">PantryRepository.kt</div>
+          <div class="comp-desc">Orquesta la base de datos local Room. Transforma ProductEntity a modelos de dominio Product.</div>
+          <span class="code-pill">getAllProductsSortedByExpiration()</span>
+        </div>
+        <div class="comp-card">
+          <div class="comp-title">RescueRepository.kt</div>
+          <div class="comp-desc">Administra el catálogo de packs sorpresa de excedentes y pedidos generados por comercios.</div>
+          <span class="code-pill">reserveBag() • publishBag()</span>
+        </div>
+        <div class="comp-card">
+          <div class="comp-title">UserRepository.kt</div>
+          <div class="comp-desc">Gestiona credenciales, roles diferenciados (Cliente vs Comercio) y sesiones activas.</div>
+          <span class="code-pill">registerUser() • login()</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONECTOR 3: REPOSITORIOS <-> FUENTES DE DATOS -->
+    <div class="flow-banner">
+      <div class="flow-item down">
+        <span>▼ <strong>Persistencia Local:</strong> Sentencias SQL transaccionales verificadas en tiempo de compilación</span>
+      </div>
+      <div class="flow-item up">
+        <span>▲ <strong>Consumo Remoto:</strong> Peticiones HTTP GET y deserialización Gson hacia objetos DTO</span>
+      </div>
+    </div>
+
+    <!-- 4. CAPA DE FUENTES DE DATOS (DATA SOURCES) -->
+    <div class="layer layer-sources">
+      <div class="layer-title-bar">
+        <div class="layer-name">
+          <span>💾 4. Capa de Fuentes de Datos (Data Sources: Local & Remoto)</span>
+        </div>
+        <span class="layer-tag">Offline-First • Room SQLite v2.6.1 • Retrofit 2.9.0 + OkHttp</span>
+      </div>
+      <div class="components-grid two-cols">
+        <div class="comp-card">
+          <div class="comp-title">Local Data Source (Room Database / SQLite)</div>
+          <div class="comp-desc">
+            • <strong>AppDatabase.kt:</strong> Singleton con migración destructiva controlada.<br/>
+            • <strong>ProductDao.kt:</strong> Sentencias @Query, @Insert, @Update, @Delete.<br/>
+            • <strong>ProductEntity.kt:</strong> Tabla relacional 'products' con índice numérico de fecha.
+          </div>
+          <span class="code-pill">SQLite Nativo • Emite Flow&lt;List&lt;ProductEntity&gt;&gt;</span>
+        </div>
+        <div class="comp-card">
+          <div class="comp-title">Remote Data Source (Retrofit 2 REST API)</div>
+          <div class="comp-desc">
+            • <strong>RetrofitClient.kt:</strong> Singleton con OkHttp (timeouts 15s y Logging).<br/>
+            • <strong>FoodApiService.kt:</strong> Endpoint @GET cgi/search.pl de OpenFoodFacts.<br/>
+            • <strong>OpenFoodFactsDto.kt:</strong> Deserializador JSON en objetos tipados.
+          </div>
+          <span class="code-pill">HTTPS / TLS • Callbacks con Coroutines</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-legend">
+    <div class="legend-items">
+      <div class="legend-pill"><span class="dot blue"></span> Capa Vista (UI)</div>
+      <div class="legend-pill"><span class="dot orange"></span> ViewModel</div>
+      <div class="legend-pill"><span class="dot green"></span> Repositorio (Dominio)</div>
+      <div class="legend-pill"><span class="dot purple"></span> Data Sources (Room & Retrofit)</div>
+    </div>
+    <div>DispenSave • Android Studio • Arquitectura Oficial Evaluada</div>
+  </div>
+</div>
+
+</body>
+</html>
+
